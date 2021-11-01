@@ -1,0 +1,112 @@
+.image-container{
+    max-width: 250px;
+    height: auto;
+}
+.field-heading{
+    color: var(--secondary-text-color);
+}
+.icon-container:hover {
+    opacity: 0.3;
+    cursor: pointer;
+}
+.friends-icon{
+    color: #4287f5;
+    font-size: 40px;
+}
+.person-add-icon{
+    color: #4287f5;
+    font-size: 40px;
+}
+.friend-text{
+    font-weight: 500;
+    color: black;
+}
+.friends-btn{
+    background-color: #cccccc;
+    border-color: #cccccc;
+    color: #000;
+    font-weight: 500;
+}
+.friends-btn:hover {
+    background-color: #bfbfbf;
+    border-color: #bfbfbf;
+}
+.dropdown-toggle::after {
+    content: none;
+}
+.card{
+    border-radius: 12px;
+}
+.material-icons{
+    font-size: 30px;
+}
+.material-icons:hover{
+    cursor: pointer;
+}
+.confirm-friend-request{
+    color: green;
+}
+.confirm-friend-request:hover {
+    opacity: 0.3;
+}
+.decline-friend-request:hover {
+    opacity: 0.3;
+}
+.decline-friend-request{
+    color: red;
+}
+.message-btn-text{
+    font-weight: 500;
+}
+.company-header-avatar{
+  height: 170px;
+  width: 170px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.search-avatar{
+  height: 130px;
+  width: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  display:inline-block;
+}
+.chat-avatar{
+  height: 50px;
+  width: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: inline-block;
+}
+.private-chat-avatar{
+    height: 40px;
+  width: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: inline-block;
+}
+.icon-container {
+  position: relative;
+}
+.status-circle-on {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #5ad539;
+  border: 1px solid white;
+  bottom: 2px;
+  right: 0px;
+  position: absolute;
+}
+.status-circle-off {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: red;
+  border: 1px solid white;
+  bottom: 2px;
+  right: 0px;
+  position: absolute;
+}

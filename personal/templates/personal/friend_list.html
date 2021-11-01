@@ -1,0 +1,59 @@
+{% load static %}
+
+<style>
+    .friend-message-span{
+		font-weight: 380;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		font-size: 0.6em;
+		color: var(--light-primary-text-color);
+	}
+    .friend-container:hover{
+
+		background: #8a8d91;
+		cursor: pointer;
+	}
+    .friend-container{
+        border-radius: 12px;
+	}
+    .friends-list-container{
+		max-height: 500px;
+		#overflow-y: scroll;
+	}
+</style>
+
+<div class="card">
+    <div class="d-flex flex-row align-items-center card-header" style="border-bottom: none; background-color: #f0f2f5">
+        <h4>Friends</h4>
+    </div>
+    <div class="card-body p-1" style="background-color: #f0f2f5;">
+        <div class="d-flex flex-column friends-list-container"
+             style="background-color: #f0f2f5;overflow: hidden"
+        id="id_list_friend">
+            {% for x in m_and_f %}
+            <div class="d-flex flex-row p-2 friend-container flex-grow-1"
+                 {% if include_parent == "home" %} onclick="redirectPrivateChat('{{x.friend.id}}')"
+                 {% else %}
+                    onclick="onSelectFriend('{{x.friend.id}}')"
+                 {% endif %}
+                 id="id_friend_container_{{x.friend.id}}">
+                <div class="icon-container">
+                    <img class="chat-avatar" id="id_friend_img_{{x.friend.id}}" src="{{ x.friend.profile_img.url }}" >
+                    <div class="status-circle-on"></div>
+                </div>
+                <div class="d-flex flex-column">
+                    <span class="username-span">{{x.friend.username}}</span>
+                    <span class="friend-message-span">{{x.message|truncatechars:20}}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+    function redirectPrivateChat(){
+        window.location.href= "{{ base_url }}"+"/chat/"
+    }
+</script>

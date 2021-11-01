@@ -1,0 +1,249 @@
+
+{% load static %}
+
+<style>
+    .home{
+        border-radius: 5px;
+        background-color: #b6effb;
+    }
+    a:hover{
+        background-color:#3dd5f3;
+    }
+    .badge-notify{
+        background:red;
+        position:absolute;
+        border-radius: 50%;
+        top: 0px;
+        left: 50px;
+        display:none;
+    }
+    .badge_custom{
+        width: 18px;
+        height: 18px;
+        text-align:center;
+        color: white;
+        font-weight: bold;
+        padding-top: 1px;
+    }
+    .scrollable-menu{
+        height: auto;
+        max-height: 90vh;
+        width: 360px;
+        overflow-x: hidden;
+        border-radius: 12px;
+    }
+    .notifications-label{
+        font-weight: bold;
+        #margin: 0px 5px 0px 5px;
+        padding: 0px 24px 0px 24px;
+    }
+</style>
+<div class="d-flex p-3 px-md-4 border-bottom shadow-sm" style="background-color: white;
+padding:0px 24px 0px 24px;">
+    <!-- medium screen-->
+    <div class= "d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
+        <!-- column1-->
+
+        <a class="home p-2 mr-3 text-dark text-center" href="{% url 'home' %}" style="width: 100px;height: 38px">Home</a>
+        <!-- column2-->
+        <form class="select2-search--inline justify-content-start" action="" onsubmit="return executeQuery();">
+            <input type="text" class="form-control" name="keyword" id="id_keyword_large" placeholder="Search by email or username..."
+            style="height: 38px; width: 250px; border-radius: 15px; border: 0.2px solid #25cff2;background-color: #f2f2f2">
+        </form>
+        <!-- column3-->
+        <div class="d-flex flex-row-reverse flex-grow-1">
+            <nav>
+                {% if request.user.is_authenticated %}
+                    <div class="dropdown dropdown-menu-sm-end show p-2 m-1" >
+                        <div class="d-flex flex-row">
+                            <div>
+                                 <!--chat notifications-->
+                                <div class="container" style="position:relative;">
+                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%;background-color: #b6effb" data-bs-toggle="dropdown"
+                                    id="id_chat_notification_dropdown_toggle" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fab fa-facebook-messenger " style="color:blue"></i>
+                                    </button>
+                                    <span class="badge_custom badge-notify" id="id_chat_notifications_count" style="font-size:10px;"></span>
+                                    <div class="dropdown-menu scrollable-menu" aria-labelledby="id_chat_notification_dropdown_toggle"
+                                        id="id_chat_notifications_container">
+                                        <div class="notifications-label" style="font-weight: bold; margin: 0px 5px 0px 5px">
+                                            Messenger
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <!--general notifications-->
+                                <div class="container" style="position:relative;">
+                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%;background-color: #b6effb" data-bs-toggle="dropdown"
+                                    id="id_general_notification_dropdown_toggle" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-bell " style="color:blue"></i>
+                                    </button>
+                                    <span class="badge_custom badge-notify" id="id_general_notifications_count" style="font-size:10px;"></span>
+                                    <div class="dropdown-menu scrollable-menu" aria-labelledby="id_general_notification_dropdown_toggle"
+                                        id="id_general_notifications_container" style="margin: 5px 0px 0px 0px">
+                                        <div class="notifications-label">
+                                            Notifications
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <!--account-->
+                                <div class="container">
+                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%; background-color: #b6effb" data-bs-toggle="dropdown"
+                                    id="id_account_infor" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-user-alt " style="color:blue"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="id_account_infor"
+                                        id="id_account_information">
+                                        <div style="font-weight: bold; margin: 0px 5px 0px 5px">
+                                            Account information
+                                        </div>
+                                        <a class="dropdown-item" href="{% url 'view' user_id=request.user.id %}">Profile</a>
+                                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="btn btn-outline-secondary" href="{% url 'login' %}">Login</a>
+                    <a class="btn btn-outline-primary" href="{% url 'register' %}">Register</a>
+                {% endif %} 
+            </nav>
+        </div>
+    </div>
+    <!-- small screen -->
+    <div class="d-flex d-md-none flex-column my-auto align-items-center" style="margin: 0 auto">
+        <a class="home p-2 text-dark text-center" href="{% url 'home' %}" style="width: 80px;height: 38px; font-weight: bold">Home</a>
+        <form class="select2-search--inline justify-content-start mt-3 mb-2" action="" onsubmit="return executeQuery();">
+            <input type="text" class="form-control" name="keyword" id="id_keyword_small" placeholder="Search"
+            style="height: 38px">
+        </form>
+        <div class="d-flex flex-row-reverse flex-grow-1">
+            <nav>
+                {% if request.user.is_authenticated %}
+                    <div class="dropdown show p-2" >
+                        <div class="d-flex flex-row">
+                            <div>
+                                <!--account-->
+                                <div class="container">
+                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%; background-color: #b6effb" data-bs-toggle="dropdown"
+                                    id="id_account_info" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-user-alt mb-3" style="color:blue"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="id_account_info"
+                                        id="id_account_infor_container">
+                                        <div style="font-weight: bold; margin: 0px 5px 0px 5px">
+                                            Account information
+                                        </div>
+                                        <a class="dropdown-item" href="{% url 'view' user_id=request.user.id %}">Profile</a>
+                                        <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="btn btn-outline-secondary" href="{% url 'login' %}">Login</a>
+                    <a class="btn btn-outline-primary" href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</div>
+
+{% include 'snippets/general_notifications.html' %}
+{% include 'snippets/chat_notifications.html' %}
+
+<script type="text/javascript">
+    // ws:// or wss://
+    var ws_scheme= window.location.protocol == "https:" ? "wws" : "ws";
+    var ws_path = ws_scheme+"://"+window.location.host+"/"// deveplopment
+    //var ws_path = ws_scheme+"://"+window.location.host+":8001/"// production
+    var notification_websocket = new WebSocket(ws_path)
+
+    notification_websocket.onmessage = function (message) {
+        var data = JSON.parse(message.data)
+
+        console.log("NOTIFICATIONS DATA :"+ message.data)
+        console.log("Got notification websocket message. " + data['general_msg_type']);
+		console.log("Got notification websocket message. " + data['chat_msg_type']);
+
+
+        //general notifications
+        if(data['general_msg_type']==0){
+            handleGeneralNotificationsData(data['notifications'],data['new_page_number'])
+        }
+        if(data['general_msg_type']==5){
+            updateGeneralNotificationDiv(data['notification'])
+        }
+        if(data['general_msg_type']==1){
+            setGeneralPaginationExhausted()
+        }
+        if(data['general_msg_type']==2){
+            refreshGeneralNotificationsData(data['notifications'])
+        }
+        if(data['general_msg_type']==3) {
+            handleNewGeneralNotificationsData(data['notifications'])
+        }
+        if(data['general_msg_type']==4){
+            setUnreadGeneralNotificationsCount(data['count'])
+        }
+
+
+        //private chat notification
+        if(data['chat_msg_type']==10){
+            handleChatNotificationsData(data['notifications'],data['new_page_number'])
+        }
+        if(data['chat_msg_type']==11){
+            setChatPaginationExhausted()
+        }
+        if(data['chat_msg_type']==13){
+            handleNewChatNotificationsData(data['notifications'])
+        }
+        if(data['chat_msg_type']==14){
+            setChatNotificationsCount(data['count'])
+        }
+
+    }
+
+    notification_websocket.onerror = function (e) {
+        console.error("Notification socket closed unexpectedly")
+    }
+
+    notification_websocket.onopen = function (e) {
+        console.log("Notification socket onopen")
+        setupGenernalNotificationsMenu()
+        getFirstGenernalNotificationPage()
+        getUnreadGeneralNotificationsCount()
+
+        setupChatNotificationsMenu()
+        getFirstChatNotificationsPage()
+    }
+
+    notification_websocket.onclose = function (e) {
+        console.log("Notification socket closed ")
+    }
+
+    if(notification_websocket.readyState == WebSocket.OPEN){
+        console.log("Notification socket OPEN complete")
+    }
+    else if(notification_websocket.readyState == WebSocket.CONNECTING){
+        console.log("Notification socket is connecting")
+    }
+</script>
+
+<script type="text/javascript">
+    function executeQuery() {
+        var query = document.getElementById("id_keyword_small").value
+        if(query==""){
+            var query = document.getElementById("id_keyword_large").value
+        }
+        window.location.replace("{% url 'search' %}?keyword="+query)
+        return false
+    }
+</script>

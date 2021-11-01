@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="container register">
+    <div class="row">
+        <div class="col-md-3 register-left">
+            <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt="none"/>
+            <h3>Welcome</h3>
+            <p>You are 30 seconds away from chatting with your friends!</p>
+        </div>
+        <div class="col-md-9 register-right">
+            <div class="tab-content" id="myTabContent">
+                <h3 class="text-center" style="margin-top:7px">Sign in</h3>
+                <div class="col-md-8 form-group"style="display: block;margin-right: auto;margin-left: auto;">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input  class="form-control m-3" type="email" name="email" placeholder="Email" required="" id="inputEmail">
+                        <input  class="form-control m-3" type="password" name="password" placeholder="Password" required="" id="inputPassword">
+                        <div class="ml-3 text-center">
+                            {% for field in login_form %}
+                                <p>
+                                    {% for error in field.errors %}
+                                        <p style="color: red">{{ error }}</p>
+                                    {% endfor %}
+                                </p>
+                            {% endfor %}
+                            {% if login_form.non_field_errors %}
+                                <div style="color: red">
+                                    <p>{{ login_form.non_field_errors }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <input  class="btn btn-outline-primary" type="submit" value="Login" style="display: block;margin-right: auto;margin-left: auto;">
+                        <div class="d-flex flex-column my-4">
+                            <a class="m-auto" href="{% url 'password_reset' %}">Reset password</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

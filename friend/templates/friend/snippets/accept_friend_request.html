@@ -1,0 +1,25 @@
+<script type="text/javascript">
+    function acceptFriendRequest(friend_request_id,uiUpdateFuction){
+        var url = "{% url 'friend:friend-request-accept' friend_request_id=12345 %}".replace("12345",friend_request_id)
+        $.ajax({
+            type:"GET",
+            dataType:'json',
+            url:url,
+            timeout:5000,
+            success: function (data) {
+                if(data.response=="Friend request accepted"){
+
+                }
+                else if(data.response!=null){
+                    alert(data.response)
+                }
+            },
+            error: function (data) {
+                alert("Something went wrong: "+data)
+            },
+            complete: function (data) {
+                uiUpdateFuction()
+            }
+        })
+    }
+</script>
