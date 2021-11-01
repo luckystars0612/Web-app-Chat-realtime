@@ -70,17 +70,12 @@ def get_recent_chatroom_messages(user):
             # find newest msg from that friend in the chat room
             try:
                 message = RoomChatMessage.objects.filter(room=room, user=friend).latest("timestamp")
+                print(message.timestamp)
+                print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo")
             except RoomChatMessage.DoesNotExist:
                 # create a dummy message with dummy timestamp
-                today = datetime(
-                    year=1950,
-                    month=1,
-                    day=1,
-                    hour=1,
-                    minute=1,
-                    second=1,
-                    tzinfo=pytz.UTC
-                )
+                today = "2021-11-01 01:32:40.407205+00:00"
+                today = datetime.strptime(''.join(today.rsplit(':', 1)), '%Y-%m-%d %H:%M:%S.%f%z')
                 message = RoomChatMessage(
                     user=friend,
                     room=room,
