@@ -6,14 +6,8 @@
     <!-- Medium+ screen -->
     <div class="d-none d-md-flex flex-column">
         <div class="row no-gutters">
-            <div class="col-2">
-                {% include 'personal/room_list.html' %}
-            </div>
             <div class="col">
                 {% include 'public_chat/public_chat_room.html' with room_id=room_id %}
-            </div>
-            <div class="col-3">
-                {% include 'personal/friend_list.html' with include_parent="home" %}
             </div>
         </div>
     </div>

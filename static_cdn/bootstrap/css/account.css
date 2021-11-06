@@ -110,3 +110,20 @@
   right: 0px;
   position: absolute;
 }
+
+.profile-container{
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    background:black;
+}
+.position-mid{
+    color: honeydew;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
