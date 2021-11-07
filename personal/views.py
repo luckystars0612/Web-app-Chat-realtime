@@ -1,7 +1,9 @@
 
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.conf import settings
 from chat.views import get_recent_chatroom_messages
+from public_chat.models import PublicRoomChatMessage, PublicChatRoom
 
 
 DEBUG = False
@@ -22,5 +24,15 @@ def home_screen_view(request):
 
     return render(request,"personal/home.html",context)
 
+
+def upload_file(request):
+    file = request.FILES['file']
+    room = PublicChatRoom.objects.first()
+    newMessage = PublicRoomChatMessage(user=request.user, room=room, content=file.name, file=file)
+    newMessage.save()
+    print('-'*50)
+    print(file)
+    print('-'*50)
+    return redirect(reverse('public-chat'))
 
 

@@ -274,6 +274,9 @@ def get_room_or_error(room_id):
 def get_roomchat_messages(room,page_number):
     try:
         query_set = PublicRoomChatMessage.objects.by_room(room)
+        print("-"*50)
+        print(query_set)
+        print("-"*50)
 
         p = Paginator(query_set, DEFAULT_ROOMCHAT_MESSAGES_PAGE_SIZE)
 
@@ -303,4 +306,6 @@ class LazyRoomChatMessageEncoder(Serializer):
         dump_object.update({'message': str(obj.content)})
         dump_object.update({'profile_img': str(obj.user.profile_img.url)})
         dump_object.update({'timestamp': calculate_timestamp(obj.timestamp)})
+        if (obj.file):
+            dump_object.update({'file': obj.file.url})
         return dump_object

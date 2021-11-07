@@ -156,6 +156,11 @@
 
             </div>
             <div class="d-flex chat-message-input-container">
+                <form action="upload/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name='file'>
+                    <input type="submit" value="upload">
+                </form>
                 <textarea class="flex-grow-1 chat-message-input" id="id_chat_message_input"></textarea>
                 <button class="btn btn-primary chat-message-submit-button">
                     <span class="material-icons-outlined">send</span>
@@ -177,7 +182,9 @@
 
     var public_chat_websocket = new WebSocket(ws_path)
     public_chat_websocket.onmessage = function (message) {
-        console.log("Got chat websocket message:" +message.data)
+        console.log("----------------------------------------------------------")
+        console.log("Got chat websocket message:" + message.data)
+        console.log("------------------------------------------------------------")
         var data = JSON.parse(message.data)
 
         displayChatroomLoadSpinner(data.display_progress_bar)
@@ -303,14 +310,15 @@
         user_id = data['user_id']
         profile_img = data['profile_img']
         timestamp = data['timestamp']
+        file = data['file']
         var msg = message +"\n"
         var username = uName
         createChatMessageElement(msg,username,profile_img,user_id,position,timestamp,
-            maintainPosition,isNewMessage)
+            maintainPosition,isNewMessage, file)
     }
 
     function createChatMessageElement(msg,username,profile_img,user_id,position,timestamp,
-    maintainPosition,isNewMessage) {
+    maintainPosition,isNewMessage, file) {
         if(position == "friend"){
             var chatlog = document.getElementById("id-chat-log")
 
@@ -323,7 +331,6 @@
             nameDiv.classList.add("nameDiv-css")
             nameDiv.classList.add("d-flex")
             nameDiv.classList.add("flew-row")
-
             var nameP = document.createElement("p")
             newMessageDiv.classList.add("nameP-css")
             nameP.innerHTML = username
@@ -358,9 +365,13 @@
                 timestampDiv.style.visibility = "hidden"
             })
 
-            var msgDiv =document.createElement("div")
+            var msgDiv = document.createElement("div")
             msgDiv.classList.add("msgDiv-left-css")
-            msgDiv.innerHTML = message
+            if (file) {
+                msgDiv.innerHTML = '<a href="' + file + '">' + message + '</a>'
+            } else {
+                msgDiv.innerHTML = message
+            }
             messageDiv.appendChild(msgDiv)
 
             chatDiv.appendChild(messageDiv)
@@ -412,7 +423,11 @@
 
             var msgDiv =document.createElement("div")
             msgDiv.classList.add("msgDiv-right-css")
-            msgDiv.innerHTML = message
+            if (file) {
+                msgDiv.innerHTML = '<a href="' + file + '" style="color:black;">' + message + '</a>'
+            } else {
+                msgDiv.innerHTML = message
+            }
             messageDiv.appendChild(msgDiv)
 
             newMessageDiv.appendChild(messageDiv)
