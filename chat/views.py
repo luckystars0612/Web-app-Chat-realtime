@@ -1,3 +1,4 @@
+import datetime
 import json
 from itertools import chain
 
@@ -11,6 +12,7 @@ from django.utils.http import urlencode
 from account.models import Account
 from friend.models import FriendList
 from .utils import find_or_create_private_chat
+import datetime
 
 from chat.models import *
 # Create your views here.
@@ -70,12 +72,11 @@ def get_recent_chatroom_messages(user):
             # find newest msg from that friend in the chat room
             try:
                 message = RoomChatMessage.objects.filter(room=room, user=friend).latest("timestamp")
-                print(message.timestamp)
-                print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo")
+
             except RoomChatMessage.DoesNotExist:
                 # create a dummy message with dummy timestamp
                 today = "2021-11-01 01:32:40.407205+00:00"
-                today = datetime.strptime(''.join(today.rsplit(':', 1)), '%Y-%m-%d %H:%M:%S.%f%z')
+                today = datetime.datetime.strptime(''.join(today.rsplit(':', 1)), '%Y-%m-%d %H:%M:%S.%f%z')
                 message = RoomChatMessage(
                     user=friend,
                     room=room,
