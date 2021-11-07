@@ -75,7 +75,7 @@ def get_recent_chatroom_messages(user):
             except RoomChatMessage.DoesNotExist:
                 # create a dummy message with dummy timestamp
                 today = "2021-11-01 01:32:40.407205+00:00"
-                today = datetime.strptime(''.join(today.rsplit(':', 1)), '%Y-%m-%d %H:%M:%S.%f%z')
+                today = datetime.datetime.strptime(''.join(today.rsplit(':', 1)), '%Y-%m-%d %H:%M:%S.%f%z')
                 message = RoomChatMessage(
                     user=friend,
                     room=room,

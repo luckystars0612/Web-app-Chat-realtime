@@ -12,6 +12,7 @@ from django.core.serializers import serialize
 from .constants import *
 from chat.utils import calculate_timestamp
 from chat.exceptions import ClientError
+from django.utils.html import escape
 
 User = get_user_model()
 
@@ -113,7 +114,7 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
             "profile_img": event['profile_img'],
             "username": event['username'],
             "user_id":event['user_id'],
-            "message": event['message'],
+            "message": escape(event['message']),
             "timestamp":timestamp,
         })
 

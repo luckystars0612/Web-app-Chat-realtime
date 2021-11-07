@@ -5,6 +5,7 @@ from channels.db import database_sync_to_async
 from django.core.serializers import serialize
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.utils.html import escape
 
 import json
 import asyncio
@@ -207,7 +208,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             "username": event['username'],
             "user_id": event['user_id'],
             "profile_img": event['profile_img'],
-            "message": event['message'],
+            "message": escape(event['message']),
             "timestamp": timestamp,
 
         })
