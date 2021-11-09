@@ -6,6 +6,25 @@
 	        background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
 		}
 
+		.connected-users-icon{
+			position: absolute;
+			right: 60px;
+			top: 15px;
+			color: white;
+			cursor: pointer;
+			width: 15px;
+			height: 15px;
+		}
+
+		.connected-users-count{
+			position: absolute;
+			right: 20px;
+			top: 15px;
+			color: white;
+			cursor: pointer;
+			font-size: 18px;
+		}
+
 		.chat{
 			margin-top: auto;
 			margin-bottom: auto;
@@ -118,6 +137,17 @@
 		height: 15px;
 		width:15px;
 		background-color: #4cd137;
+		border-radius: 50%;
+		bottom: 0em;
+		right: 0em;
+		border:1.5px solid white;
+	}
+
+	.offline_icon{
+		position: absolute;
+		height: 15px;
+		width:15px;
+		background-color: #c23616;
 		border-radius: 50%;
 		bottom: 0em;
 		right: 0em;

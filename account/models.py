@@ -53,6 +53,7 @@ class Account(AbstractBaseUser):
     profile_img = models.ImageField(max_length=255,upload_to=get_profile_image_filepath,
                                     null=True, blank=True, default=get_default_profile_image)
     hide_email = models.BooleanField(default=True)
+    is_online = models.BooleanField(default=False)
 
     objects = MyAccountManager()
 
