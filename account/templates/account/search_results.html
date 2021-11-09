@@ -1,7 +1,39 @@
-{% extends 'base.html' %}
+{% extends 'base_new.html' %}
 
 {% block main %}
 
+<style>
+    .friends-text-container{
+        color:white
+    }
+    
+    .search-avatar{
+        max-height: 100px;
+		max-width: 100px;
+        background-color: white;
+    }
+    .friends-text-container{
+		border: 1px solid #cccccc;
+		border-radius: 12px;
+	}
+    
+    .friends-btn:hover {
+		background-color: #bfbfbf;
+		border-color: #bfbfbf;
+	}
+	.dropdown-toggle::after {
+		content: none;
+	}
+	.profile-link{
+		color: #000;
+	}
+	.checkmark-icon{
+		color: green;
+	}
+	.cancel-icon{
+		color: red;
+	}
+</style>
     <div class="container">
         <div class="card p-2">
 

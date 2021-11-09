@@ -1,123 +1,60 @@
+{% extends 'base_new.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-home.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap/css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap/css/now-ui-kit.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap/css/account.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/d7ab9768c5.js" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,600,700,800,900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800,900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,600,700,800,900&display=swap" rel="stylesheet">
-    <title>Raspberry</title>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg bg-transparent">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <img src="
-{% static 'bootstrap/assets/menuIcon.svg' %}" width="20px" height="20px" style="max-width: none !important;">
-    </button>
-    <img src="{% static 'bootstrap/assets/raspberry-pi.png' %}" width="50" height="50">
-    <div class="collapse navbar-collapse" id="navbarSupportedContent" style="margin-left: 20px !important">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" onclick="jump_to_feature()" >Features</a>
-            </li>
-        </ul>
+{% block main %}
+<!------ Include the above in your HEAD tag ---------->
 
 
-        {% if request.user.is_authenticated %}
-            <div class="nav-item dropdown dropdown-menu-sm-end">
-                <div class="profile-container" id="navbarDropdown" role="button"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     <i class="fas fa-user-alt position-mid"></i>
-                </div>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown"
-                style="background:#AD91FF; border-radius: 10px">
-
-                    <a class="dropdown-item" href="{% url 'view' user_id=request.user.id %}" style="font-size:15px;
-                    font-weight:500;">
-                        <i class="fa fa-user-o"></i>Profile</a>
-                    <hr>
-                    <a class="dropdown-item" href="{% url 'logout' %}" style="font-size:15px;font-weight:500;
-                    margin-top:0px;margin-bottom: 10px">
-                        <i class="material-icons">&#xE8AC;</i>Logout</a>
-                </div>
-            </div>
-        {% else %}
-            <a class="btn login-btn btn-outline-accent my-2 my-sm-0" style="font-size: 10px !important;font-family:
-        poppins !important;margin-right: 5px" href="{% url 'register' %}">REGISTER</a>
-            <a class="btn login-btn btn-outline-accent my-2 my-sm-0" style="font-size: 10px !important;font-family:
-        poppins !important;" href="{% url 'login' %}">LOGIN</a>
-        {% endif %} 
-    </div>
-</nav>
 <div class="heading">
     <h1 class="display-5 title">It's time to connect people all around the world.</h1>
     <p class="subtitle">Raspberry is a multi-purpose app ready to skill up and boost up your communication<br />Also
         features auto-moderation, administration, music and much more!</p>
-    <a class="btn btn-primary btn-lg" href="{% url 'public-chat' %}" role="button">Global messenger</a>
+    <a class="btn btn-secondary btn-lg" href="{% url 'public-chat' %}" role="button">Global messenger</a>
     <a class="btn btn-secondary btn-lg" href="{% url 'chat:private-chat' %}" role="button">Private chat</a>
-    <br /><br /><br /><br /><br /><br />
+
 </div>
-<div id="features" class="features">
+<div id="features" class="features-custom" style="background-color: #1d1e28">
     <div class="title">Features of Raspberry</div>
     <div class="subtitle">We provide you the best features in Raspberry!</div>
-    <div class="cards">
-        <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Public chat</h5>
-            <p class="card-text">The public chat consists of different kinds of people, get the relax time after a long day</p>
-        </div>
-    </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Private chat</h5>
-                <p class="card-text">Take part in the communication with your friend, including documents, messages
-                , files,... attached</p>
+    <div class="cards" style="text-align:center">
+        <div class="">
+            <div class="card" style="width: 18rem;display: inline-block; vertical-align: middle;">
+                <div class="card-body">
+                    <h5 class="card-title">Public chat</h5>
+                    <p class="card-text">The public chat consists of different kinds of people, get the relax time after a long day</p>
+                </div>
             </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Friend system</h5>
-                <p class="card-text">Connect with friends all over the world</p>
-            </div>
+                <div class="card" style="width: 18rem;display: inline-block; vertical-align: middle;">
+                    <div class="card-body">
+                        <h5 class="card-title">Private chat</h5>
+                        <p class="card-text">Take part in the communication with your friend, including documents, messages
+                        , files,... attached</p>
+                    </div>
+                </div>
+                <div class="card" style="width: 18rem;display: inline-block; vertical-align: middle;">
+                    <div class="card-body">
+                        <h5 class="card-title">Friend system</h5>
+                        <p class="card-text">Connect with friends all over the world</p>
+                    </div>
+                </div>
         </div>
     </div>
 </div>
-
-<div class="page_end">
-    <div class="start">
-        <div class="card">
-            <div class="card-body gs-card">
-                <div class="title">Ready to try Raspberry</div>
-                <div class="subtitle">Get the Raspberry and start your chat cool perks!</div>
-                <br />
-                <a class="btn btn-primary btn-lg" role="button" onclick="jump_to_top()">Get started</a>
-            </div><br />
-        </div>
-    </div>
-    <div class="footer">
-        <div class="bot-footer">
-            <img src="{% static 'bootstrap/assets/raspberry-pi.png' %}" width="150"><br />
-            Copyright © Raspberry Team - 2021
-        </div><br/>
-        <div class="nouridio">website designed by Raspberry Team </div>
+<div class="start">
+    <div class="card" >
+        <div class="card-body gs-card" style="background-color: #1d1e28; border-radius:20px; width:70%; margin:auto">
+            <div class="title" style="text-align:center">Ready to try Raspberry</div>
+            <div class="subtitle" style="text-align:center">Get the Raspberry and start your chat cool perks!</div>
+            <br />
+            <div class="" style="text-align: center;">
+                <button class="btn btn-primary btn-lg"  role="button" onclick="jump_to_top()">Get started</button>
+            </div>
+        </div><br />
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script src="{% static 'bootstrap/js/now-ui-kit.min.js' %}"></script>
-</body>
 <script>
     function jump_to_feature(){
         document.getElementById('features').scrollIntoView()
@@ -126,6 +63,5 @@
         window.scrollTo(0,0);
     }
 </script>
-</html>
-
+{% endblock %}
 

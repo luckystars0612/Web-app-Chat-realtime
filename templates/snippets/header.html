@@ -2,12 +2,8 @@
 {% load static %}
 
 <style>
-    .home{
-        border-radius: 5px;
-        background-color: #b6effb;
-    }
-    a:hover{
-        background-color:#3dd5f3;
+    a.home:hover{
+        text-decoration: none
     }
     .badge-notify{
         background:red;
@@ -34,21 +30,30 @@
     }
     .notifications-label{
         font-weight: bold;
-        #margin: 0px 5px 0px 5px;
+        margin: 0px 5px 0px 5px;
         padding: 0px 24px 0px 24px;
     }
+    a.auth-label:hover{
+        text-decoration: none
+    }
+    .auth-label{
+        color: white;
+        margin: 0px 5px 0px 5px
+    }
 </style>
-<div class="d-flex px-md-4 shadow-sm">
+<div class="d-flex px-md-4 shadow-sm" style="height: 75px; background-color:#1d1e28">
     <!-- medium screen-->
     <div class= "d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
         <!-- column1-->
 
-        <a class="home p-2 mr-3 text-dark text-center" href="{% url 'home' %}" style="width: 100px;height: 38px">Home</a>
+        <a class="home p-2 mr-3  text-center" href="{% url 'home' %}" style="color: white; font-size:20px">Home</a>
         <!-- column2-->
+        {% if request.user.is_authenticated %}
         <form class="select2-search--inline justify-content-start" action="" onsubmit="return executeQuery();">
             <input type="text" class="form-control" name="keyword" id="id_keyword_large" placeholder="Search by email or username..."
-            style="height: 38px; width: 250px; border-radius: 15px; border: 0.2px solid #25cff2;background-color: #f2f2f2">
+            style="height: 38px; width: 350px; border-radius: 15px; border: 0.2px solid #25cff2;background-color: #f2f2f2">
         </form>
+        {% endif %} 
         <!-- column3-->
         <div class="d-flex flex-row-reverse flex-grow-1">
             <nav>
@@ -58,9 +63,9 @@
                             <div>
                                  <!--chat notifications-->
                                 <div class="container" style="position:relative;">
-                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%;background-color: #b6effb" data-bs-toggle="dropdown"
+                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%;" data-bs-toggle="dropdown"
                                     id="id_chat_notification_dropdown_toggle" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fab fa-facebook-messenger " style="color:blue"></i>
+                                        <i class="fab fa-facebook-messenger " style="color: white; font-size:20px"></i>
                                     </button>
                                     <span class="badge_custom badge-notify" id="id_chat_notifications_count" style="font-size:10px;"></span>
                                     <div class="dropdown-menu scrollable-menu" aria-labelledby="id_chat_notification_dropdown_toggle"
@@ -74,9 +79,9 @@
                             <div>
                                 <!--general notifications-->
                                 <div class="container" style="position:relative;">
-                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%;background-color: #b6effb" data-bs-toggle="dropdown"
+                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%;" data-bs-toggle="dropdown"
                                     id="id_general_notification_dropdown_toggle" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-bell " style="color:blue"></i>
+                                        <i class="fas fa-bell " style="color: white; font-size:20px"></i>
                                     </button>
                                     <span class="badge_custom badge-notify" id="id_general_notifications_count" style="font-size:10px;"></span>
                                     <div class="dropdown-menu scrollable-menu" aria-labelledby="id_general_notification_dropdown_toggle"
@@ -91,9 +96,9 @@
                             <div>
                                 <!--account-->
                                 <div class="container">
-                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%; background-color: #b6effb" data-bs-toggle="dropdown"
+                                    <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%; " data-bs-toggle="dropdown"
                                     id="id_account_infor" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-user-alt " style="color:blue"></i>
+                                        <i class="fas fa-user-alt " style="color: white; font-size:20px"></i>
                                     </button>
                                     <div class="dropdown-menu scrollable-menu" aria-labelledby="id_account_infor"
                                         id="id_account_information">
@@ -109,8 +114,8 @@
                         </div>
                     </div>
                 {% else %}
-                    <a class="btn btn-outline-secondary" href="{% url 'login' %}">Login</a>
-                    <a class="btn btn-outline-primary" href="{% url 'register' %}">Register</a>
+                    <a class="auth-label" href="{% url 'login' %}">Login</a>
+                    <a class="auth-label" href="{% url 'register' %}">Register</a>
                 {% endif %} 
             </nav>
         </div>
@@ -132,7 +137,7 @@
                                 <div class="container">
                                     <button type="button" class="btn btn-xs" style="font-size:25px; border-radius: 50%; background-color: #b6effb" data-bs-toggle="dropdown"
                                     id="id_account_info" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-user-alt mb-3" style="color:blue"></i>
+                                        <i class="fas fa-user-alt mb-3" style="color: white; font-size:20px"></i>
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="id_account_info"
                                         id="id_account_infor_container">
