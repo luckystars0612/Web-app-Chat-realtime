@@ -98,12 +98,8 @@ ASGI_APPLICATION = 'ChatApp.routing.application'
 
 DATABASES = {
     'default': {
-        'ENGINE' : 'django.db.backends.postgresql',
-        'NAME' : 'chat_app',
-        'USER' : 'postgres',
-        'PASSWORD' : '259438167',
-        'HOST' : 'localhost',
-        'PORT' : '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 CHANNEL_LAYERS = {

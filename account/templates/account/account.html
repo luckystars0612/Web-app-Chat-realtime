@@ -1,15 +1,25 @@
 
-{% extends 'base.html' %}
+{% extends 'base_new.html' %}
 {% block main %}
+<style>
+    .friend-text{
+        color: white;
+    }
+</style>
     <div class="container-fluid">
-        <div class="d-flex flex-row justify-content-center flex-wrap align-items-start">
+        {% if is_self %}
+            <h3 class="text-center" style="margin-top:7px">Your information</h3>
+            {% else %}
+            <h3 class="text-center" style="margin-top:7px">Information of {{username}}</h3>
+        {% endif %}
 
-            <div class="card profile-card m-2">
+        <div class="" style="width: 100%; height: 500px">
+
+            <div class="card profile-card m-2"style="width: 50%; float:left">
               <div class="card-body">
-                <div class="d-flex flex-column justify-content-center p-4">
+                <div class="d-flex flex-column justify-content-center p-4" style="color: white">
                     <div class="image-container mx-auto mb-4">
-{#                        <img class="d-block border border-dark rounded-circle img-fluid mx-auto profile-image" alt="no" id="id_profile_image" src="{{profile_image}}">#}
-                        <img class="border border-dark company-header-avatar" alt="no" id="id_profile_image" src="{{profile_image}}">
+                        <img class="border border-light company-header-avatar" alt="no" id="id_profile_image" src="{{profile_image}}" style="background-color: white;">
                     </div>
                     <p class="mt-4 mb-1 field-heading">Email</p>
                     {%  if is_self %}
@@ -21,7 +31,7 @@
                             <h5>{{email}}</h5>
                         {% endif %}
                     {% endif %}
-                    <p class="mt-4 mb-1 field-heading">Username</p>
+                    <p class="mt-4 mb-1 field-heading">Display name</p>
                     <h5>{{username}}</h5>
 
                     <!-- If Auth user is viewing their own profile -->
@@ -36,7 +46,7 @@
             </div>
 
             {% if request.user.is_authenticated %}
-            <div class="d-flex flex-column mb-4">
+            <div class="d-flex flex-column mb-4" style=" width: 45%; height: 100%">
 
                 <!-- THEM to YOU -->
                 {% if request_sent == 0 %}
@@ -73,12 +83,9 @@
 
                     {% if is_friend %}
                         <div class="pt-4 m-auto">
-                            <button class=" dropdown btn btn-secondary friends-btn" type="button" id="id_friends_toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Friends
+                            <button class=" btn btn-danger friends-btn" onclick="removeFriend('{{id}}', onFriendRemoved)">
+                            Unfriend
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="id_friends_toggle">
-                                <a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
-                            </div>
                         </div>
                     {% endif %}
 
@@ -107,7 +114,7 @@
                 {% endif %}
 
                 {% if is_friend %}
-                    <div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" onclick="createOrReturnPrivateChat('{{id}}')">
+                    <div class="d-flex flex-row align-items-center btn m-2 px-4" style=" background-color: #1d1e28; color:white" onclick="createOrReturnPrivateChat('{{id}}')">
                         <span class="material-icons m-auto">
                         message
                         </span>
