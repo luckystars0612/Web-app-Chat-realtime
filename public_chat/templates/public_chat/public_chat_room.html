@@ -348,7 +348,7 @@
             var msgDiv = document.createElement("div")
             msgDiv.classList.add("msgDiv-left-css")
             if (file) {
-                msgDiv.innerHTML = '<a href="' + file + '">' + message + '</a>'
+                msgDiv.innerHTML = '<a href="' + file + '" target="_blank" style="color:black;">' + "<u>" + message + "</u>" + '</a>'
             } else {
                 msgDiv.innerHTML = message
             }
