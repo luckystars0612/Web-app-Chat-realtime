@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 from chat.views import get_recent_chatroom_messages
 from public_chat.models import PublicRoomChatMessage, PublicChatRoom
+from chat.models import RoomChatMessage, PrivateChatRoom
 
 
 DEBUG = False
@@ -28,13 +29,24 @@ def home_screen_view(request):
 
 def upload_file(request):
     file = request.FILES['file']
-    room = PublicChatRoom.objects.first()
-    newMessage = PublicRoomChatMessage(user=request.user, room=room, content=file.name, file=file)
+    try:
+        room_id = request.POST['room_id']
+        room = request.POST['room']
+    except:
+        pass
+
+    if room == "private":
+        private_room = PrivateChatRoom.objects.get(id=room_id)
+        newMessage = RoomChatMessage(user=request.user, room=private_room, content=file.name, file=file)
+    else:
+        room = PublicChatRoom.objects.first()
+        newMessage = PublicRoomChatMessage(user=request.user, room=room, content=file.name, file=file)
     newMessage.save()
     return JsonResponse(status=201, data= {
         "file": newMessage.file.url,
         "content": newMessage.content
     })
+    #return JsonResponse(data={"data":1})
     
 
 

@@ -48,4 +48,8 @@ class LazyRoomChatMessageEncoder(Serializer):
         dump_object.update({'message': escape(str(obj.content))})
         dump_object.update({'profile_img': str(obj.user.profile_img.url)})
         dump_object.update({'timestamp': calculate_timestamp(obj.timestamp)})
+        if (obj.file):
+            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            dump_object.update({'file': obj.file.url})
+
         return dump_object
