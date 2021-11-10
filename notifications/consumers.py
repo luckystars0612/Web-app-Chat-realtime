@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from channels.db import database_sync_to_async
 from django.contrib.contenttypes.models import ContentType
+from account.models import Account
 
 import json
 from datetime import datetime
@@ -33,12 +34,21 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         """
         print("NotificationConsumer: connect: " + str(self.scope["user"]))
         await self.accept()
+        try:
+            await update_user_status(self.scope['user'], True)
+        except Exception as e:
+            print(e)
 
     async def disconnect(self, code):
         """
         Called when the WebSocket closes for any reason.
         """
         print("NotificationConsumer: disconnect")
+        try:
+            await update_user_status(self.scope['user'], False)
+        except Exception as e:
+            print(e)
+
 
     async def receive_json(self, content):
         """
@@ -468,6 +478,16 @@ def get_unread_chat_notification_count(user):
     else:
         raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
     return None
+
+@database_sync_to_async
+def update_user_status(user,status):
+    """
+        Updates the user `status.
+        `status` can be one of the following status: 'online', 'offline'
+    """
+    account = Account.objects.get(id=user.pk)
+    account.is_online = status
+    account.save()
 
 
 

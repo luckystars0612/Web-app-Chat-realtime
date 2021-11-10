@@ -1,7 +1,9 @@
 import datetime
+from itertools import chain
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
 from django.core.serializers import serialize
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -17,6 +19,7 @@ from account.utils import LazyAccountEncoder
 from chat.utils import calculate_timestamp,LazyRoomChatMessageEncoder
 from chat.constants import *
 from account.models import Account
+from chat.views import get_recent_chatroom_messages
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
 
@@ -65,7 +68,14 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                     await self.send_user_info_payload(payload['user_info'])
                 else:
                     raise ClientError("INVALID_PAYLOAD","Retrieve user info fail")
-
+            elif command == "get_friends_info":
+                print("ChatConsumer: get friends info")
+                payload = await get_friends_info(self.scope['user'])
+                if payload != None:
+                    payload = json.loads(payload)
+                    await self.send_user_friend_info(payload['friends_info'])
+                else:
+                    raise ClientError("INVALID_PAYLOAD","Retrieve friend's user info fail")
         except ClientError as e:
             await self.display_progress_bar(False)
             await self.handle_client_error(e)
@@ -168,15 +178,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         ])
 
+        dataJson = {
+            "type":"chat.message",
+            "profile_img":self.scope['user'].profile_img.url,
+            "username":self.scope['user'].username,
+            "user_id":self.scope['user'].id,
+            "message":message,
+        }
         await self.channel_layer.group_send(
-            room.group_name,
-            {
-                "type":"chat.message",
-                "profile_img":self.scope['user'].profile_img.url,
-                "username":self.scope['user'].username,
-                "user_id":self.scope['user'].id,
-                "message":message,
-            }
+            room.group_name, dataJson
         )
     # These helper methods are named by the types we send - so chat.join becomes chat_join
     async def chat_join(self, event):
@@ -233,6 +243,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         await self.send_json({
             'user_info':user_info
+        })
+
+    async def send_user_friend_info(self,friends_info):
+        print("ChatConsumer: send_friends_info")
+
+        await self.send_json({
+            'friends_info': friends_info
         })
 
     async def display_progress_bar(self, is_displayed):
@@ -297,6 +314,30 @@ def get_user_info(room,user):
         return json.dumps(payload)
     except ClientError as e:
         print("Exception: "+str(e))
+    return None
+
+@database_sync_to_async
+def get_friends_info(user):
+    """
+        return friends info of the authenticated user
+    """
+    try:
+        friend_list = FriendList.objects.get(user=user)
+        friends = friend_list.friends.all()
+        payload = {}
+        s = LazyAccountEncoder()
+        payload['friends_info'] = s.serialize(friends)
+        newest_msg_list = get_recent_chatroom_messages(user)
+
+        for data in payload['friends_info']:
+            for msg in newest_msg_list:
+                if data['id'] == str(msg['friend'].id):
+                    data['newest_message'] = escape(msg['message'].content)
+            #print(data)
+        return json.dumps(payload)
+
+    except FriendList.DoesNotExist:
+        pass
     return None
 
 @database_sync_to_async

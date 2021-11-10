@@ -3,13 +3,29 @@
 
 {% extends 'base.html' %}
 {% load static %}
+<style>
+    .offline_icon{
+		position: absolute;
+		height: 15px;
+		width:15px;
+		background-color: #c23616;
+		border-radius: 50%;
+		bottom: 0em;
+		right: 0em;
+		border:1.5px solid white;
+	}
+</style>
 
 {% block main %}
-
+<style>
+    .main{
+        /* background-color:#1d1e28 */
+    }
+</style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-    <div>
+    <div style="margin-top:0px; padding-top:50px">
         <div class="container-fluid h-100 mt-2">
 			<div class="row justify-content-center h-100">
 				<div class="col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
@@ -31,11 +47,21 @@
                                         <div class="img_cont" style="width:50px;">
                                             <img class="rounded-circle user_img" id="id_friend_img_{{x.friend.id}}"
                                                  src="{{ x.friend.profile_img.url }}">
-                                            <span class="online_icon"></span>
+                                            {% if x.friend.is_online %}
+                                                <span id="online_status_{{ x.friend.id }}" style="position: absolute;
+                                                height: 15px;
+                                                width:15px;background-color: #4cd137;border-radius: 50%;bottom: 0em;
+                                                right: 0em;border:1.5px solid white;"></span>
+                                            {% else %}
+                                                <span id="online_status_{{ x.friend.id }}" style="position: absolute;height: 15px;
+                                                width:15px;background-color: #c23616;border-radius: 50%;bottom: 0em;
+                                                right: 0em;border:1.5px solid white;"></span>
+                                            {% endif %}
                                         </div>
                                         <div class="user_info">
                                             <span>{{x.friend.username}}</span>
-                                            <p>{{x.message|truncatechars:20}}</p>
+                                            <p id="id_friend_message_{{ x.friend.id }}"
+                                            >{{x.message|truncatechars:20}}</p>
                                         </div>
                                     </div>
                                 </li>
@@ -49,14 +75,17 @@
                     <div class="card" id="id_chatroom_card">
                         <div class="card-header msg_head">
                             <div class="d-flex bd-highlight" style="height:50px;">
-                                <div class="img_cont">
+                                <div class="img_cont" id="id_user_info_container">
                                     <img src="#" class="rounded-circle user_img" id="id_other_user_profile_image" alt="none">
-                                    <span class="online_icon"></span>
+                                    <span style="position: absolute;height: 15px;
+                                                width:15px;border-radius: 50%;bottom: 0em;
+                                                right: 0em;border:1.5px solid white;"
+                                                id="online-status-code"></span>
                                 </div>
                                 <div style="margin-bottom: auto;margin-left: 15px;">
                                     <span id="id_other_username" style="font-size:20px;font-weight:500;
                                     color:white"></span>
-                                    <p style="font-size:10px; color:white">Online</p>
+                                    <p id="online-status-text" style="font-size:10px; color:white"></p>
                                 </div>
                                 <div class="video_cam">
                                     <span><i class="fas fa-video"></i></span>
@@ -133,6 +162,11 @@
 
         var chat_websocket = null;
         var roomId = null;
+        const GET_USERINFO_INTERVAL = 4000
+        if("{{request.user.is_authenticated}}"){
+            setInterval(getUserInfo, GET_USERINFO_INTERVAL)
+            setInterval(getFriendsInfo,GET_USERINFO_INTERVAL)
+        }
 
         onStart()
         
@@ -210,6 +244,10 @@
                 if(data.user_info){
                     handleUserInfoPayload(data.user_info)
                 }
+                if(data.friends_info){
+                    //console.log(data.friends_info)
+                    handleFriendsInfo(data.friends_info)
+                }
                 if(data.msg_type==0)
                 {
                     if(data['user_id']=={{ auth_user_id }}){
@@ -278,13 +316,54 @@
                 "room_id": roomId
             }))
         }
+
+        function getFriendsInfo(){
+            chat_websocket.send(JSON.stringify({
+                "command":"get_friends_info"
+            }))
+        }
+
+
         
         function handleUserInfoPayload(user_info) {
             document.getElementById("id_other_username").innerHTML= user_info.username
             document.getElementById("id_other_user_profile_image").src = user_info.profile_img
             document.getElementById("id_user_info_container").href = "{% url 'view' user_id=123123 %}".replace("123123",user_info.id)
+            var status_code = document.getElementById("online-status-code")
+            var status_text = document.getElementById("online-status-text")
+
+            if(user_info['is_online']=="True"){
+                status_code.style.backgroundColor = "#4cd137"
+                status_text.innerHTML="Online"
+            }
+            else{
+                status_code.style.backgroundColor = "#c23616"
+                status_text.innerHTML="Offline"
+            }
         }
 
+        function handleFriendsInfo(friends_info){
+            console.log(friends_info)
+            friends_info.forEach(friend=>{
+
+                var status_icon = document.getElementById("online_status_"+friend.id)
+                var status_text = document.getElementById("id_friend_message_"+friend.id)
+                if(friend['is_online']=="True"){
+                    status_icon.style.backgroundColor="#4cd137"
+                    console.log("the user "+friend.username+"is online")
+                }
+                else{
+                    status_icon.style.backgroundColor="#c23616"
+                    console.log("the user "+friend.username+"is offline")
+                }
+                if(friend['newest_message'].length>20){
+                    status_text.innerHTML=friend['newest_message'].slice(0,20)
+                }
+                else{
+                     status_text.innerHTML=friend['newest_message']
+                }
+            })
+        }
 
         function appendChatMessage(data,position,maintainPosition,isNewMessage) {
             message = data['message']
