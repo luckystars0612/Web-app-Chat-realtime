@@ -9,170 +9,128 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-    <style>
-        .chat-log{
-        height: 350px;
-        width: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
-        padding: 10px;
-        background-color: #fff;
-        font-size: 0.9em;
-        flex-direction: column-reverse;
-        }
-        .chat-avatar{
-            height: 50px;
-            width: 50px;
-            border-radius: 50%;
-            #border: solid #b6effb;
-            object-fit: cover;
-            display: inline-block;
-            margin-top: auto;
-            bottom: 0;
-        }
-        .chat-avatar:hover{
-            cursor: pointer;
-            #background-color: #4f5050;
-        }
-        .newMessageDiv-css{
-            max-width: 100%;
-        }
-        .nameDiv-css{
-            padding-left: 70px;
-            height: 20px;
-        }
-        .nameP-css{
-
-            color:#65676b;
-        }
-        .chatDiv-css{
-
-        }
-        .messageDiv-left-css{
-
-            background-color: #e4e6eb;
-            padding: 10px 15px 10px 15px;
-            border-radius: 12px;
-            display: block;
-            margin-left: 5px;
-            min-height: 50px;
-            max-width: 70%;
-        }
-        .messageDiv-right-css{
-            background-color: rgb(0, 132, 255);
-            border-radius: 12px;
-            margin: 1px 0px 1px 0px;
-            padding: 10px 15px 10px 15px;
-            min-height: 50px;
-            max-width: 70%;
-            display: block;
-        }
-        .msgDiv-left-css{
-            color: #050505;
-            unicode-bidi: isolate;
-            display: block;
-            font-size: medium;
-            white-space: pre-wrap;
-            -ms-word-break: break-all;
-            word-break: break-word;
-            word-wrap: break-word;
-        }
-        .msgDiv-right-css{
-            color: white;
-            unicode-bidi: isolate;
-            font-size: medium;
-            display: block;
-            white-space: pre-wrap;
-            -ms-word-break: break-all;
-            word-break: break-word;
-            word-wrap: break-word;
-        }
-        .timestampDiv-right-css{
-            width: 200px;
-            height: 50px;
-            border-radius: 12px;
-            background-color: rgba(0, 0, 0, .7);
-            text-align: center;
-            font-size: medium;
-            visibility: hidden;
-            margin-top: auto;
-            margin-bottom: auto;
-            margin-left: auto;
-            color: white;
-        }
-        .timestampP-right-css{
-            width: 100%;
-            height: 25px;
-            margin: 12px 0px 0px 0px;
-        }
-        .timestampDiv-left-css{
-            width: 200px;
-            height: 50px;
-            border-radius: 12px;
-            visibility: hidden;
-            background-color: rgba(0, 0, 0, .7);
-            text-align: center;
-            font-size: medium;
-            color: white;
-            margin-top: auto;
-            margin-bottom: auto;
-            margin-right: auto;
-        }
-        .timestampP-left-css{
-            width: 100%;
-            height: 100%;
-            padding-top: 10px;
-        }
-    </style>
-
     <div>
-        <div class="row no-gutters">
-            <div class="col-md-3">
-                {% include 'personal/friend_list.html' %}
-            </div>
-            <div class="col">
-                <div class="card" id="id_chatroom_card">
-                    <div class="d-flex flex-row align-items-center card-header" id="id_room_title">
-                        <a class="d-flex flex-row" target="_blank" id="id_user_info_container">
-                            <div class="icon-container">
-                                <img class="private-chat-avatar" id="id_other_user_profile_image" src="#" alt="none">
-                                <div class="status-circle-on">
+        <div class="container-fluid h-100 mt-2">
+			<div class="row justify-content-center h-100">
+				<div class="col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
+					<div class="card-header">
+						<div class="input-group">
+							<input type="text" placeholder="Search..." name="" class="form-control search">
+							<div class="input-group-prepend">
+								<span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="card-body contacts_body custom-scrollbar" id="contacts_body" onmouseover="onmouseover_contacts_body()"
+                        onmouseout="onmouseoout_contacts_body()">
+						<ui class="contacts">
+                            {% for x in m_and_f %}
+                                <li id="friend-item-container">
+                                    <div class="d-flex align-items-center" onclick="onSelectFriend('{{x.friend.id}}')"
+                                         id="id_friend_container_{{x.friend.id}}">
+                                        <div class="img_cont" style="width:50px;">
+                                            <img class="rounded-circle user_img" id="id_friend_img_{{x.friend.id}}"
+                                                 src="{{ x.friend.profile_img.url }}">
+                                            <span class="online_icon"></span>
+                                        </div>
+                                        <div class="user_info">
+                                            <span>{{x.friend.username}}</span>
+                                            <p>{{x.message|truncatechars:20}}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+						</ui>
+					</div>
+					<div class="card-footer"></div>
+				</div></div>
 
+                <div class="col-md-9 col-xl-9 chat">
+                    <div class="card" id="id_chatroom_card">
+                        <div class="card-header msg_head">
+                            <div class="d-flex bd-highlight" style="height:50px;">
+                                <div class="img_cont">
+                                    <img src="#" class="rounded-circle user_img" id="id_other_user_profile_image" alt="none">
+                                    <span class="online_icon"></span>
+                                </div>
+                                <div style="margin-bottom: auto;margin-left: 15px;">
+                                    <span id="id_other_username" style="font-size:20px;font-weight:500;
+                                    color:white"></span>
+                                    <p style="font-size:10px; color:white">Online</p>
+                                </div>
+                                <div class="video_cam">
+                                    <span><i class="fas fa-video"></i></span>
+                                    <span><i class="fas fa-phone"></i></span>
                                 </div>
                             </div>
-                            <div class="d-flex flex-column">
-                                <a class="ml-2" id="id_other_username" style="height: 22px; font-weight: bold; font-size: 17px"></a>
-                                <a class="ml-2" style="font-size: 13px; color:#5c636a"> Đang hoạt động</a>
+                            <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                            <div class="action_menu">
+                                <ul>
+                                    <li><i class="fas fa-user-circle"></i> View profile</li>
+                                    <li><i class="fas fa-users"></i> Add to close friends</li>
+                                    <li><i class="fas fa-plus"></i> Add to group</li>
+                                    <li><i class="fas fa-ban"></i> Block</li>
+                                </ul>
                             </div>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex flex-column" id="id_chat_log_container">
+                        </div>
+
+                        <div class="d-flex flex-column card-body msg_card_body" id="id_chat_log_container"
+                        style="padding:0px">
+
                             <div class="d-flex flex-row justify-content-center" id="id_loading_spinner_container">
                                 <div class="spinner-border text-primary" id="id_loading_spinner" role="status" style="display: none">
                                     <span class="sr-only">Loading...</span>
                                 </div>
                             </div>
 
-                            <div class="d-flex chat-log" id="id-chat-log" style="scrollbar-width: thin">
+                            <div class="d-flex chat-log" id="id-chat-log"
+                            onmouseover="onmouseover_chatlog()"
+                            onmouseout="onmouseout_chatlog()" style="padding:0px 20px 0px 20px" >
 
                             </div>
 
                             <span class="{% if not debug %}d-none{% endif %} page-number" id="id_page_number">1</span>
 
-                            <div class="d-flex chat-message-input-container">
-                                <textarea class="flex-grow-1 chat-message-input" id="id_chat_message_input"></textarea>
-                                <button class="btn btn-primary chat-message-submit-button">
-                                    <span class="material-icons-outlined">send</span>
-                                </button>
+                            <div class="card-footer">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                                    </div>
+                                    <textarea name="" class="form-control type_msg" placeholder="Type your message..."
+                                        id="id_chat_message_input"></textarea>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
-            </div>
-        </div>
+			</div>
+		</div>
+
     </div>
     <script>
+
+        function onmouseover_contacts_body(){
+            document.getElementById("contacts_body").style.overflowY="scroll";
+        }
+        function onmouseoout_contacts_body(){
+            document.getElementById("contacts_body").style.overflow="hidden";
+        }
+        function onmouseover_chatlog(){
+            document.getElementById("id-chat-log").style.overflowY="scroll";
+        }
+        function onmouseout_chatlog(){
+            document.getElementById("id-chat-log").style.overflowY="hidden";
+        }
+        $(document).ready(function(){
+            $('#action_menu_btn').click(function(){
+                $('.action_menu').toggle();
+            });
+        });
+
         var chat_websocket = null;
         var roomId = null;
 
@@ -349,16 +307,18 @@
                 newMessageDiv.classList.add("d-flex")
                 newMessageDiv.classList.add("flex-column")
                 newMessageDiv.classList.add("newMessageDiv-css")
+                newMessageDiv.classList.add("friend")
+
 
                 var nameDiv = document.createElement("div")
                 nameDiv.classList.add("nameDiv-css")
                 nameDiv.classList.add("d-flex")
                 nameDiv.classList.add("flew-row")
 
-                var nameP = document.createElement("p")
-                newMessageDiv.classList.add("nameP-css")
-                nameP.innerHTML = username
-                nameDiv.appendChild(nameP)
+                {#var nameP = document.createElement("p")#}
+                {#newMessageDiv.classList.add("nameP-css")#}
+                {#nameP.innerHTML = username#}
+                {#nameDiv.appendChild(nameP)#}
 
 
                 newMessageDiv.appendChild(nameDiv)
@@ -366,6 +326,7 @@
                 var chatDiv = document.createElement("div")
                 chatDiv.classList.add("d-flex")
                 chatDiv.classList.add("flex-row")
+                chatDiv.classList.add("align-items-center")
                 chatDiv.classList.add("chatDiv-css")
 
                 var profileImg = document.createElement("img")
@@ -421,11 +382,12 @@
                 var chatlog = document.getElementById("id-chat-log")
 
                 var newMessageDiv = document.createElement("div")
-                newMessageDiv.classList.add("newMessageDiv-css")
                 newMessageDiv.style.marginLeft = "auto"
                 newMessageDiv.classList.add("d-flex")
                 newMessageDiv.classList.add("flex-row-reverse")
+                newMessageDiv.classList.add("newMessageDiv-css")
 
+                newMessageDiv.classList.add("myself")
 
                 var messageDiv = document.createElement("div")
                 messageDiv.classList.add("messageDiv-right-css")
@@ -540,13 +502,14 @@
         }
         
         function highlightFriend(userId) {
-            document.getElementById("id_friend_container_"+userId).style.background = "#DADDE1"
+            var friendItem=document.getElementById("id_friend_container_"+userId).parentElement
+            friendItem.style.background="#3b5560"
         }
         
         function clearhighlightFriend() {
             {% if m_and_f %}
                 {% for x in m_and_f %}
-                    document.getElementById("id_friend_container_{{ x.friend.id }}").style.background = ""
+                    document.getElementById("id_friend_container_{{ x.friend.id }}").parentElement.style.background = ""
                 {% endfor %}
             {% endif %}
             //document.getElementById("id_other_user_profile_image").classList.add("d-none")

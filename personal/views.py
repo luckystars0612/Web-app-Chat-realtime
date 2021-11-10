@@ -1,5 +1,6 @@
 
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.urls import reverse
 from django.conf import settings
 from chat.views import get_recent_chatroom_messages
@@ -30,9 +31,10 @@ def upload_file(request):
     room = PublicChatRoom.objects.first()
     newMessage = PublicRoomChatMessage(user=request.user, room=room, content=file.name, file=file)
     newMessage.save()
-    print('-'*50)
-    print(file)
-    print('-'*50)
-    return redirect(reverse('public-chat'))
+    return JsonResponse(status=201, data= {
+        "file": newMessage.file.url,
+        "content": newMessage.content
+    })
+    
 
 

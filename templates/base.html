@@ -8,18 +8,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
     <script src="https://kit.fontawesome.com/d7ab9768c5.js" crossorigin="anonymous"></script>
 
-    <!-- markdown-it -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/languages/python.min.js"
-            integrity="sha512-spHdVeD/qHU9MIk2FZLWC1/IxHQYk+pGo8fS2dTBagXCA0X4qGMmNMhlM1oBmR6b6yS2EnBTl5Kqk9QFJM6dBg=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.2.0/markdown-it.min.js"
-            integrity="sha512-cTQeM/op796Fp1ZUxfech8gSMLT/HvrXMkRGdGZGQnbwuq/obG0UtcL04eByVa99qJik7WlnlQOr5/Fw5B36aw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-{#    <script>hljs.initHighlightingOnLoad();</script>#}
-    <script>hljs.highlightAll();</script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+          crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+
 
     <link rel="stylesheet" href="{% static 'bootstrap/css/fonts/style.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/style.css' %}">
@@ -27,11 +26,13 @@
     <link rel="stylesheet" href="{% static 'bootstrap/css/account.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/search_results.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/edit_account.css' %}">
-
+    <link rel="stylesheet" href="{% static 'bootstrap/css/friendlist.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/chat-overall.css' %}">
 
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
             integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
@@ -43,11 +44,12 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
 
+
     <title>Chat</title>
     <style>
         .main{
             min-height: 90vh;
-            height: 100%;
+            height: 90%;
             {#width: 80%;#}
             margin: 0px 0px 0px 0px;
         }
@@ -66,8 +68,6 @@
         {% endblock %}
     </div>
 
-    <!--footer-->
-    {% include 'snippets/footer.html' %}
 
 {#    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>#}
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -85,21 +85,5 @@
         }
     }
 
-    function validateText(str) {
-        var md = window.markdownit({
-            highlight: function (str,lang) {
-                if(lang && hljs.getLanguage(lang)){
-                    try{
-                        return '<pre class="hljs"><code>'+hljs.highlight(lang,str,true).value+'</code></pre>';
-                    }
-                    catch(__){}
-                }
-                return '<pre class="hljs"><code>'+md.utils.escapeHtml(str)+'</code></pre>';
-            },
-            linkify:true,
-        });
-        var result = md.render(str);
-        return result
-    }
 </script>
 </html>
