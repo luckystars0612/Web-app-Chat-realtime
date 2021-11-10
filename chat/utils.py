@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.contrib.humanize.templatetags.humanize import naturalday
 from django.core.serializers.python import Serializer
+from django.utils.html import escape
 
 from chat.models import PrivateChatRoom
 from chat.constants import *
@@ -44,7 +45,11 @@ class LazyRoomChatMessageEncoder(Serializer):
         dump_object.update({'msg_id': str(obj.id)})
         dump_object.update({'user_id': str(obj.user.id)})
         dump_object.update({'username': str(obj.user.username)})
-        dump_object.update({'message': str(obj.content)})
+        dump_object.update({'message': escape(str(obj.content))})
         dump_object.update({'profile_img': str(obj.user.profile_img.url)})
         dump_object.update({'timestamp': calculate_timestamp(obj.timestamp)})
+        if (obj.file):
+            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            dump_object.update({'file': obj.file.url})
+
         return dump_object

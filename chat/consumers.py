@@ -7,6 +7,7 @@ from asgiref.sync import sync_to_async
 from django.core.serializers import serialize
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.utils.html import escape
 
 import json
 import asyncio
@@ -34,6 +35,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         """
         # Messages will have a "command" key we can switch on
         print("ChatConsumer: receive_json")
+        file = content.get("file", None)
+        print("--------------------------------------")
+        print(file)
         command = content.get("command", None)
         try:
             if command == "join":
@@ -46,7 +50,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             elif command == "send":
                 if len(content['message'].lstrip()) == 0:
                     raise ClientError(422,"You can not send a empty message")
-                await self.send_room_message(content['room'],content['message'])
+                await self.send_room_message(content['room'],content['message'], file)
                 # if len(content['message'].lstrip()) != 0:
                 #     await self.send_room_message(content['room'], self.scope['user'])
             elif command == "get_room_chat_messages":
@@ -155,7 +159,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             "leave":str(room.id)
         })
 
-    async def send_room_message(self, room_id, message):
+    async def send_room_message(self, room_id, message, file=None):
         """
         Called by receive_json when someone sends a message to a room.
         """
@@ -173,19 +177,25 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await asyncio.gather(*[
             append_unread_msg_if_not_connected(room, room.user2, connected_users, message),
             append_unread_msg_if_not_connected(room, room.user1, connected_users, message),
-            create_room_chat_message(room, self.scope['user'], message)
+            #create_room_chat_message(room, self.scope['user'], message)
 
         ])
 
+        dataJson = {
+            "type":"chat.message",
+            "profile_img":self.scope['user'].profile_img.url,
+            "username":self.scope['user'].username,
+            "user_id":self.scope['user'].id,
+            "message":message,
+        }
+
+        if not file:
+            await create_room_chat_message(room, self.scope['user'], message)
+        else:
+            dataJson['file'] = file
+
         await self.channel_layer.group_send(
-            room.group_name,
-            {
-                "type":"chat.message",
-                "profile_img":self.scope['user'].profile_img.url,
-                "username":self.scope['user'].username,
-                "user_id":self.scope['user'].id,
-                "message":message,
-            }
+            room.group_name, dataJson
         )
     # These helper methods are named by the types we send - so chat.join becomes chat_join
     async def chat_join(self, event):
@@ -212,15 +222,19 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         print("ChatConsumer: chat_message")
 
         timestamp = calculate_timestamp(datetime.datetime.now())
-        await self.send_json({
+        dataJson = {
             "msg_type": MSG_TYPE_MESSAGE,
-            "username": event['username'],
-            "user_id": event['user_id'],
             "profile_img": event['profile_img'],
-            "message": event['message'],
-            "timestamp": timestamp,
-
-        })
+            "username": event['username'],
+            "user_id":event['user_id'],
+            "message": escape(event['message']),
+            "timestamp":timestamp,
+        }
+        try:
+            dataJson['file'] = escape(event['file'])
+        except: pass
+        
+        await self.send_json(dataJson)
 
     async def send_messages_payload(self, messages, new_page_number):
         """
@@ -331,7 +345,7 @@ def get_friends_info(user):
         for data in payload['friends_info']:
             for msg in newest_msg_list:
                 if data['id'] == str(msg['friend'].id):
-                    data['newest_message'] = msg['message'].content
+                    data['newest_message'] = escape(msg['message'].content)
             #print(data)
         return json.dumps(payload)
 

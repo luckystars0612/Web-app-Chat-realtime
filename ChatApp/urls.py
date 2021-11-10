@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
+from personal.views import upload_file
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,7 @@ urlpatterns = [
     path('account/',include('account.urls')),
     path('friend/', include('friend.urls')),
     path('chat/',include('chat.urls')),
+    path('upload/', upload_file,name='upload-file'),
 ]
 if settings.DEBUG:
     urlpatterns+=static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)

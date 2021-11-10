@@ -12,6 +12,7 @@ from django.core.serializers import serialize
 from .constants import *
 from chat.utils import calculate_timestamp
 from chat.exceptions import ClientError
+from django.utils.html import escape
 
 User = get_user_model()
 
@@ -47,13 +48,14 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
         """
         command = content.get("command",None)
         message = content.get("message",None)
+        file = content.get("file", None)
         print("PublicChatConsumer: receive_json: "+str(command))
         print("PublicChatConsumer: receive_json: " + str(message))
         try:
             if command == "send":
                 if len(content['message'].lstrip()) == 0:
                     raise ClientError(422,"You can't send an empty message")
-                await self.send_room_message(content['room_id'],content['message'])
+                await self.send_room_message(content['room_id'],content['message'], file)
             elif command == "join":
                 await self.join_room(content['room'])
             elif command == "leave":
@@ -73,7 +75,7 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
             await self.handle_client_error(e)
         pass
 
-    async def send_room_message(self, room_id, message):
+    async def send_room_message(self, room_id, message, file=None):
         """
             called by receive_json when someone sends a message to a room
         """
@@ -89,17 +91,20 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 
         room = await get_room_or_error(room_id)
 
-        await create_public_room_chat_message(room, self.scope['user'], message)
+        dataJson = {
+            "type":"chat.message", #chat_message()
+            'profile_img': self.scope['user'].profile_img.url,
+            'username': self.scope['user'].username,
+            'user_id': self.scope['user'].id,
+            'message': message,
+        }
+        if not file:
+            await create_public_room_chat_message(room, self.scope['user'], message)
+        else:
+            dataJson['file'] = file
 
         await self.channel_layer.group_send(
-            room.group_name,
-            {
-                "type":"chat.message", #chat_message()
-                'profile_img': self.scope['user'].profile_img.url,
-                'username': self.scope['user'].username,
-                'user_id': self.scope['user'].id,
-                'message': message,
-            }
+            room.group_name, dataJson
         )
     async def chat_message(self,event):
         """
@@ -108,14 +113,19 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
         #sent a message down to client
         print("PublicChatConsumer: chat_message from user #:"+str(event['user_id']))
         timestamp = calculate_timestamp(datetime.now())
-        await self.send_json({
+        dataJson = {
             "msg_type": MSG_TYPE_MESSAGE,
             "profile_img": event['profile_img'],
             "username": event['username'],
             "user_id":event['user_id'],
-            "message": event['message'],
+            "message": escape(event['message']),
             "timestamp":timestamp,
-        })
+        }
+        try:
+            dataJson['file'] = escape(event['file'])
+        except: pass
+        
+        await self.send_json(dataJson)
 
     async def join_room(self,room_id):
         """
@@ -274,6 +284,7 @@ def get_room_or_error(room_id):
 def get_roomchat_messages(room,page_number):
     try:
         query_set = PublicRoomChatMessage.objects.by_room(room)
+        print(query_set)
 
         p = Paginator(query_set, DEFAULT_ROOMCHAT_MESSAGES_PAGE_SIZE)
 
@@ -300,7 +311,9 @@ class LazyRoomChatMessageEncoder(Serializer):
         dump_object.update({'msg_type':MSG_TYPE_MESSAGE})
         dump_object.update({'user_id': str(obj.user.id)})
         dump_object.update({'username': str(obj.user.username)})
-        dump_object.update({'message': str(obj.content)})
+        dump_object.update({'message': escape(str(obj.content))})
         dump_object.update({'profile_img': str(obj.user.profile_img.url)})
         dump_object.update({'timestamp': calculate_timestamp(obj.timestamp)})
+        if (obj.file):
+            dump_object.update({'file': obj.file.url})
         return dump_object

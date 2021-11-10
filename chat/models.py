@@ -59,6 +59,7 @@ class RoomChatMessage(models.Model):
     room = models.ForeignKey(PrivateChatRoom,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     content = models.TextField(unique=False, blank=False)
+    file = models.FileField(null=True, blank=True, upload_to='upload_files/')
 
     objects = RoomChatMessageManager()
 

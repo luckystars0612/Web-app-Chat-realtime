@@ -123,7 +123,13 @@
                             <div class="card-footer">
                                 <div class="input-group">
                                     <div class="input-group-append">
-                                        <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                                        <div class="input-group-text attach_btn" method="post">
+                                            {% csrf_token %}
+                                            <label for="id_chat_file_input">
+                                                <i class="fas fa-paperclip"></i>
+                                              </label>
+                                            <input type="file" name='file' id="id_chat_file_input" onchange="autoUpload()" style="visibility:hidden;width:0;height:0">
+                                        </div>
                                     </div>
                                     <textarea name="" class="form-control type_msg" placeholder="Type your message..."
                                         id="id_chat_message_input"></textarea>
@@ -141,6 +147,50 @@
 
     </div>
     <script>
+            function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function autoUpload() {
+        const csrftoken = getCookie('csrftoken');
+        var data = new FormData()
+        input = document.getElementById("id_chat_file_input")
+        data.append('file', input.files[0])
+        data.append('room','private')
+        console.log('---------------------------------------------------------')
+        console.log(roomId)
+        data.append('room_id', roomId)
+        input.value = null
+        const request = new Request(
+        '/upload/',
+        {headers: {'X-CSRFToken': csrftoken}}
+        );
+        fetch(request, {
+            method: 'POST',
+            body: data,
+        }).then(response => response.json())
+        .then(data => { 
+            console.log(data)
+            chat_websocket.send(JSON.stringify({
+            "command":"send",
+            "message": data.content,
+            "room": roomId,
+            "file":data.file
+        }))
+        })
+    }
 
         function onmouseover_contacts_body(){
             document.getElementById("contacts_body").style.overflowY="scroll";
@@ -371,14 +421,15 @@
             user_id = data['user_id']
             profile_img = data['profile_img']
             timestamp = data['timestamp']
+            file = data['file']
             var msg = message +"\n"
             var username = uName
             createChatMessageElement(msg,username,profile_img,user_id,position,timestamp,
-                maintainPosition,isNewMessage)
+                maintainPosition,isNewMessage, file)
         }
 
         function createChatMessageElement(msg,username,profile_img,user_id,position,timestamp,
-        maintainPosition,isNewMessage) {
+        maintainPosition,isNewMessage, file) {
             if (position == "friend") {
                 var chatlog = document.getElementById("id-chat-log")
 
@@ -431,7 +482,11 @@
 
                 var msgDiv = document.createElement("div")
                 msgDiv.classList.add("msgDiv-left-css")
-                msgDiv.innerHTML = message
+                if (file) {
+                msgDiv.innerHTML = '<a href="' + file + '" target="_blank" style="color:black;">' + "<u>" + message + "</u>" + '</a>'
+                } else {
+                    msgDiv.innerHTML = message
+                }
                 messageDiv.appendChild(msgDiv)
 
                 chatDiv.appendChild(messageDiv)
@@ -482,7 +537,11 @@
 
                 var msgDiv = document.createElement("div")
                 msgDiv.classList.add("msgDiv-right-css")
-                msgDiv.innerHTML = message
+                if (file) {
+                msgDiv.innerHTML = '<a href="' + file + '" target="_blank" style="color:black;">' + "<u>" + message + "</u>" + '</a>'
+                } else {
+                    msgDiv.innerHTML = message
+                }
                 messageDiv.appendChild(msgDiv)
 
                 newMessageDiv.appendChild(messageDiv)
