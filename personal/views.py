@@ -46,7 +46,7 @@ def upload_file(request):
         "file": newMessage.file.url,
         "content": newMessage.content
     })
-    #return JsonResponse(data={"data":1})
     
+
 
 
