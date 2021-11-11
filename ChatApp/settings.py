@@ -34,7 +34,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'enormousmaster@gmail.com'
 EMAIL_HOST_PASSWORD= 'Luckystars26102008!'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
