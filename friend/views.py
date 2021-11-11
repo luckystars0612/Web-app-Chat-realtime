@@ -15,7 +15,10 @@ def send_friend_request(request, **kwargs):
             try:
                 #get any friends request
                 friend_request = FriendRequest.objects.get(sender=user,receiver=receiver)
-                print(friend_request)
+                if str(Account.objects.get(id=user_id).username) == 'bot':
+                    friend_request.accept()
+                    payload['response'] = "You are friend"
+                    return HttpResponse(json.dumps(payload),content_type="application/json")
                 #find if any of them are active
                 if friend_request.is_active:
                     raise Exception("You already sent them a friend request")

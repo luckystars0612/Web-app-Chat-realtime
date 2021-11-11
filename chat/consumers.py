@@ -8,6 +8,8 @@ from django.core.serializers import serialize
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.utils.html import escape
+import requests
+import threading
 
 import json
 import asyncio
@@ -21,7 +23,12 @@ from chat.constants import *
 from account.models import Account
 from chat.views import get_recent_chatroom_messages
 
+
 class ChatConsumer(AsyncJsonWebsocketConsumer):
+
+    @database_sync_to_async
+    def isBot(self, room_id):
+        return str(PrivateChatRoom.objects.get(id=room_id).user1) == 'bot'
 
     async def connect(self):
         print("ChatConsumer: connect"+str(self.scope['user']))
@@ -36,8 +43,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Messages will have a "command" key we can switch on
         print("ChatConsumer: receive_json")
         file = content.get("file", None)
-        print("--------------------------------------")
-        print(file)
         command = content.get("command", None)
         try:
             if command == "join":
@@ -51,6 +56,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 if len(content['message'].lstrip()) == 0:
                     raise ClientError(422,"You can not send a empty message")
                 await self.send_room_message(content['room'],content['message'], file)
+                isBot = await self.isBot(content['room'])
+                if isBot:
+                    await self.talk_with_bot(content['room'],content['message'])
                 # if len(content['message'].lstrip()) != 0:
                 #     await self.send_room_message(content['room'], self.scope['user'])
             elif command == "get_room_chat_messages":
@@ -290,6 +298,29 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             await self.send_json(errorData)
         return
 
+
+    async def talk_with_bot(self, room_id, message):
+        res = requests.get(f'https://api.simsimi.net/v2/?text={message}&lc=vn').json()
+        room = await get_room_or_error(room_id,self.scope['user'])
+        dataJson = {
+            "type":"chat.message",
+            "profile_img":room.user1.profile_img.url,
+            "username":room.user1.username,
+            "user_id":room.user1.id,
+            "message":res['success'],
+        }
+        await self.channel_layer.group_send(
+            room.group_name, dataJson
+        )
+
+        await create_room_chat_message(room, room.user1, res['success'])
+
+
+
+
+@database_sync_to_async
+def get_bot_account():
+    return Account.objects.get(username='bot')
 
 @database_sync_to_async
 def get_room_or_error(room_id,user):
