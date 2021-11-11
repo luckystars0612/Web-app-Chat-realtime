@@ -110,3 +110,5 @@ def create_or_return_private_chat(request,**kwargs):
         payload['response'] = "you must be authenticated to start a chat"
     return HttpResponse(json.dumps(payload),content_type="application/json")
 
+def VideoCall(request):
+    return render(request,"chat/videocall.html")

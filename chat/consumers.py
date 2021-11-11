@@ -1,9 +1,9 @@
 import datetime
 from itertools import chain
 
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.generic.websocket import AsyncJsonWebsocketConsumer, WebsocketConsumer
 from channels.db import database_sync_to_async
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from django.core.serializers import serialize
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -79,9 +79,59 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                     await self.send_user_friend_info(payload['friends_info'])
                 else:
                     raise ClientError("INVALID_PAYLOAD","Retrieve friend's user info fail")
+            elif command == "call-for-callee":
+                print("ChatConsumer: call for someone")
+                try:
+                    await self.send_to_callee(content['room_id'])
+                except Exception as e:
+                    print("Error on send for callee", e)
+            # elif command == "accept-call":
+            #     print("ChatConsumer: accept call")
+            #     try:
+            #         await self.accept_call_of_caller(content['room_id'])
+            #     except Exception as e:
+            #         print("Error on accept call", e)
+
         except ClientError as e:
             await self.display_progress_bar(False)
             await self.handle_client_error(e)
+
+    async def send_to_callee(self, room_id):
+        if self.room_id != None:
+            if str(room_id) != str(self.room_id):
+                raise ClientError("ROOM_ACCESS_DENIED", "room access denied")
+        else:
+            raise ClientError("ROOM_ACCESS_DENIED", "room access denied")
+
+        room = await get_room_or_error(room_id, self.scope['user'])
+        if room.user1 == self.scope['user']:
+            friend = room.user2
+        else:
+            friend = room.user1
+
+        await self.channel_layer.group_send(
+            room.group_name,
+            {
+                "type": "call.callee",
+                "profile_img": friend.profile_img.url,
+                "username": friend.username,
+                "friend_username":self.scope['user'].username,
+                "user_id": friend.id,
+                "message": "call-from-caller",
+            }
+        )
+
+    async def call_callee(self, event):
+        print("ChatConsumer: send notification for callee")
+
+        await self.send_json({
+            "msg_type": VIDEO_CALL,
+            "username": event['username'],
+            "friend_username":event['friend_username'],
+            "user_id": event['user_id'],
+            "profile_img": event['profile_img'],
+            "message": event['message'],
+        })
 
     async def disconnect(self, code):
         """
@@ -422,3 +472,123 @@ def on_user_connected(room, user):
             UnreadChatRoomMessages(room=room, user=user).save()
             pass
     return
+
+class CallConsumer(WebsocketConsumer):
+
+    def connect(self):
+        self.accept()
+
+        # response to client, that we are connected.
+        self.send(text_data=json.dumps({
+            'type': 'connection',
+            'data': {
+                'message': "Connected"
+            }
+        }))
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.my_name,
+            self.channel_name
+        )
+
+    # Receive message from client WebSocket
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        # print(text_data_json)
+
+        eventType = text_data_json['type']
+
+        if eventType == 'reject-call':
+            caller = text_data_json['reject-user']
+            async_to_sync(self.channel_layer.group_send)(
+                caller,
+                {
+                    'type': 'reject-call',
+                }
+            )
+
+        if eventType == 'login':
+            name = text_data_json['data']['name']
+
+            # we will use this as room name as well
+            self.my_name = name
+
+            # Join room
+            async_to_sync(self.channel_layer.group_add)(
+                self.my_name,
+                self.channel_name
+            )
+
+        if eventType == 'call':
+            name = text_data_json['data']['name']
+            print(self.my_name, "is calling", name);
+            # print(text_data_json)
+
+            # to notify the callee we sent an event to the group name
+            # and their's groun name is the name
+            async_to_sync(self.channel_layer.group_send)(
+                name,
+                {
+                    'type': 'call_received',
+                    'data': {
+                        'caller': self.my_name,
+                        'rtcMessage': text_data_json['data']['rtcMessage']
+                    }
+                }
+            )
+
+        if eventType == 'answer_call':
+            # has received call from someone now notify the calling user
+            # we can notify to the group with the caller name
+
+            caller = text_data_json['data']['caller']
+            # print(self.my_name, "is answering", caller, "calls.")
+
+            async_to_sync(self.channel_layer.group_send)(
+                caller,
+                {
+                    'type': 'call_answered',
+                    'data': {
+                        'rtcMessage': text_data_json['data']['rtcMessage']
+                    }
+                }
+            )
+
+        if eventType == 'ICEcandidate':
+            user = text_data_json['data']['user']
+
+            async_to_sync(self.channel_layer.group_send)(
+                user,
+                {
+                    'type': 'ICEcandidate',
+                    'data': {
+                        'rtcMessage': text_data_json['data']['rtcMessage']
+                    }
+                }
+            )
+
+    def call_received(self, event):
+
+        # print(event)
+        print('Call received by ', self.my_name)
+        self.send(text_data=json.dumps({
+            'type': 'call_received',
+            'data': event['data']
+        }))
+
+    def call_answered(self, event):
+
+        # print(event)
+        print(self.my_name, "'s call answered")
+        self.send(text_data=json.dumps({
+            'type': 'call_answered',
+            'data': event['data']
+        }))
+
+    def ICEcandidate(self, event):
+        self.send(text_data=json.dumps({
+            'type': 'ICEcandidate',
+            'data': event['data']
+        }))

@@ -1,0 +1,115 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+    <link rel="stylesheet" href="{% static '/bootstrap/css/call.css' %}">
+    <script src="https://kit.fontawesome.com/d7ab9768c5.js" crossorigin="anonymous"></script>
+</head>
+
+<body style="position:relative;margin:0px;padding:0px;height:100vh;overflow:hidden;
+background-image: url('{% static 'images/calling_background.jpg' %}')">
+    <!-- to show incoming call and accept -->
+    <div id="answer">
+        <div class="incomingWrapper">
+            <div class="itemWrapper">
+                <h2>Incoming Call</h2>
+            </div>
+            <div class="itemWrapper">
+                <img id="profileImageA" style="padding: 30px; width: 120px; height: 120px;"
+                    src="{% static 'images/df_user.png' %}" alt="">
+            </div>
+            <div class="itemWrapper">
+                <h2 style="line-height: 0px;"><span id="callerName" style="font-size: 25px;"></span></h2>
+            </div>
+            <div class="itemWrapper d-flex flex-row" style="display: flex; flex-direction: row; margin-bottom: 20px;">
+                <button style="margin:5px" onclick="answer()">Answer</button>
+                <button style="margin:5px" onclick="reject()">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- to show outgoing call -->
+    <div id="calling">
+        <div class="incomingWrapper">
+            <div class="itemWrapper">
+                <h2>Calling</h2>
+            </div>
+            <div class="itemWrapper">
+                <img id="profileImageCA" style="padding: 30px; width: 130px; height: 130px;"
+                    src="{% static 'images/df_user.png' %}" alt="">
+            </div>
+            <div class="itemWrapper">
+                <h3 style="line-height: 0px;"><span id="otherUserNameCA" style="font-size: 25px"></span></h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- to show call in progress call -->
+    <div id="inCall">
+        <div class="incomingWrapper">
+            <div class="itemWrapper">
+                <h3>On Call With</h3>
+                <h2 style="line-height: 0px;"><span id="otherUserNameC"></span></h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- to show local and remote video -->
+    <div id="videos" style="height:100vh;width:100vw;">
+        <div id="remoteVideoDiv" style="position:relative;height:100%">
+            <video style="position:absolute;border:solid 1px green" id="remoteVideo" autoplay
+                   playsinline width="100%" height="100%"></video>
+            <div id="localVideoDiv" style="position:absolute; bottom:0; right:0;z-index:1000">
+                <video id="localVideo" width="300px" autoplay muted playsinline></video>
+            </div>
+            <div class="mute" id="mute_call">
+                <img id="mic" style="width:50px;height:50px; background:#b6effb;border-radius:50%" src=
+                        "{% static 'images/microphone_mute.png' %}" alt="">
+            </div>
+            <div class="endcall" onclick="stop()">
+                <img id="phone" style="width:50px;height:50px;" src="{% static 'images/phone-call.png' %}" alt="">
+            </div>
+            <div class="camoff" id="cam_off">
+                <img id="cam" style="width:50px;height:50px; background:#b6effb;border-radius:50%" src=
+                        "{% static 'images/cam_off.png' %}"
+                     alt="">
+            </div>
+        </div>
+
+    </div>
+</body>
+    <script src="{% static '/bootstrap/js/private_call/private_call.js' %}"></script>
+    <script>
+        document.getElementById("answer").style.display = "none";
+        document.getElementById("inCall").style.display = "none";
+        document.getElementById("calling").style.display = "none";
+        document.getElementById("videos").style.display = "none";
+    </script>
+    <script>
+        function setup(){
+            var query = location.search.substring(1);
+            var parameters = {};
+            var keyValues = query.split('&');
+            keyValues.forEach(keyValue=> {
+                var keyValuePairs = keyValue.split('=');
+                var key = keyValuePairs[0];
+                var value = keyValuePairs[1];
+                parameters[key] = value;
+            })
+
+            let userName = parameters['you'];
+            myName = userName;
+            connectSocket();
+
+            if(parameters['call']=="1"){
+                call(parameters['friend'])
+            }
+        }
+        window.onload = setup;
+    </script>
+</html>

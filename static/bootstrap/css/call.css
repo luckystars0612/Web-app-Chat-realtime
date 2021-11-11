@@ -1,0 +1,112 @@
+#calling{
+    width: 350px;
+    height: 350px;
+    top: 50%;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#answer{
+   width: 350px;
+    height: 350px;
+    top: 50%;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#video{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.mute{
+    position:absolute;
+    bottom:10px;
+    width:50px;
+    height:50px;
+    left: 40%;
+}
+.mute:hover{
+    cursor:pointer;
+}
+.endcall{
+    position:absolute;
+    bottom:10px;
+    width:50px;
+    height:50px;
+    left:50%;
+}
+.endcall:hover{
+    cursor:pointer;
+}
+.camoff{
+    position:absolute;
+    bottom:10px;
+    width:50px;
+    height:50px;
+    left:60%;
+}
+.camoff:hover{
+    cursor:pointer;
+}
+.dialWrapper {
+  width: 350px;
+  background-color: antiquewhite;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialNumpadHWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.dialNumber {
+  display: flex;
+  width: 100px;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.incomingWrapper {
+  width: 350px;
+  height: 350px;
+  background-color: #ffccff;
+  display: flex;
+  flex-direction: column;
+    border-radius: 50%;
+}
+
+.itemWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.actionButton {
+  display: flex;
+  width: 100px;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.dialActionButton {
+  display: flex;
+  width: 80px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  font-size: larger;
+  cursor: pointer;
+}
+
+#errorMessage {
+  color: red;
+}

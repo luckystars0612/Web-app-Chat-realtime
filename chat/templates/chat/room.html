@@ -38,7 +38,7 @@
 						</div>
 					</div>
 					<div class="card-body contacts_body custom-scrollbar" id="contacts_body" onmouseover="onmouseover_contacts_body()"
-                        onmouseout="onmouseoout_contacts_body()">
+                        onmouseout="onmouseout_contacts_body()">
 						<ui class="contacts">
                             {% for x in m_and_f %}
                                 <li id="friend-item-container">
@@ -88,7 +88,7 @@
                                     <p id="online-status-text" style="font-size:10px; color:white"></p>
                                 </div>
                                 <div class="video_cam">
-                                    <span><i class="fas fa-video"></i></span>
+                                    <span id="video-call"><i class="fas fa-video"></i></span>
                                     <span><i class="fas fa-phone"></i></span>
                                 </div>
                             </div>
@@ -195,7 +195,7 @@
         function onmouseover_contacts_body(){
             document.getElementById("contacts_body").style.overflowY="scroll";
         }
-        function onmouseoout_contacts_body(){
+        function onmouseout_contacts_body(){
             document.getElementById("contacts_body").style.overflow="hidden";
         }
         function onmouseover_chatlog(){
@@ -298,6 +298,19 @@
                     //console.log(data.friends_info)
                     handleFriendsInfo(data.friends_info)
                 }
+                if(data.msg_type=="call-from-caller"){
+                    if("{{ request.user.username }}"==data.username) {
+                        let url= "call"
+                        let username = "{{ request.user.username }}"
+                        let friend_username = data['friend_username']
+                        window.open(url + "/?you="+username+ "&friend=" + friend_username+"&call=0", 'callee-tab',
+                            'location=1,status=1,scrollbars=1, ' +
+                            'resizable=1,' +
+                            ' directories=1, ' +
+                            'toolbar=1, ' +
+                            'titlebar=1')
+                    }
+                }
                 if(data.msg_type==0)
                 {
                     if(data['user_id']=={{ auth_user_id }}){
@@ -359,6 +372,34 @@
             }))
             messageInputDom.value = ""
         }
+
+        {#For video call#}
+
+        document.getElementById("video-call").onclick=function(e){
+            var online = document.getElementById("online-status-text").innerHTML
+            if(online=="Online"){
+                chat_websocket.send(JSON.stringify({
+                "command":"call-for-callee",
+                    "room_id":roomId,
+                }))
+
+                let url= "call"
+                let friend_username = document.getElementById("id_other_username").innerHTML
+                let username = "{{ request.user.username }}"
+                win = window.open(url+"/?you="+username+"&friend="+friend_username+"&call=1", 'caller-tab','location=1,' +
+                    'status=1,' +
+                    'scrollbars=1, ' +
+                    'resizable=1, ' +
+                    'directories=1, ' +
+                    'toolbar=1, ' +
+                    'titlebar=1');
+            }
+            else{
+                e.preventDefault();
+            }
+        }
+
+        {#End video call#}
 
         function getUserInfo() {
             chat_websocket.send(JSON.stringify({
