@@ -169,8 +169,6 @@
         input = document.getElementById("id_chat_file_input")
         data.append('file', input.files[0])
         data.append('room','private')
-        console.log('---------------------------------------------------------')
-        console.log(roomId)
         data.append('room_id', roomId)
         input.value = null
         const request = new Request(

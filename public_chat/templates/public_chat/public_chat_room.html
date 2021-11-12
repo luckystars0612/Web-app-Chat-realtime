@@ -123,6 +123,7 @@
         var data = new FormData()
         input = document.getElementById("id_chat_file_input")
         data.append('file', input.files[0])
+        data.append('room','public')
         input.value = null
         const request = new Request(
         '/upload/',

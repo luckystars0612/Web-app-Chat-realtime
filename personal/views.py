@@ -30,11 +30,12 @@ def home_screen_view(request):
 def upload_file(request):
     file = request.FILES['file']
     try:
-        room_id = request.POST['room_id']
         room = request.POST['room']
+        room_id = request.POST['room_id']
     except:
         pass
 
+    print('a'*50, room)
     if room == "private":
         private_room = PrivateChatRoom.objects.get(id=room_id)
         newMessage = RoomChatMessage(user=request.user, room=private_room, content=file.name, file=file)
