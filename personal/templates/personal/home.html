@@ -2,21 +2,13 @@
 {% load static %}
 
 {% block main %}
-    <!-- Medium+ screen -->
-    <div class="d-none d-md-flex flex-column">
+    <div class="">
         <div class="row no-gutters">
             <div class="col">
                 {% include 'public_chat/public_chat_room.html' with room_id=room_id %}
             </div>
         </div>
     </div>
-    <!-- End Medium+ screen -->
 
-
-    <!-- Small screen -->
-    <div class="d-flex d-md-none p-2">
-        <p>Do not support for mobile right now</p>
-    </div>
-    <!-- End small screen -->
 
 {% endblock %}

@@ -6,9 +6,35 @@
 
 {% block main %}
 <style>
-    .main{
-        /* background-color:#1d1e28 */
+    .content {
+        width: calc(100% - 340px)
     }
+    .sidepanel{
+        float: left;
+        min-width: 280px;
+        max-width: 340px;
+        width: 40%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        margin-top: 0px;
+    }
+    @media screen and (max-width: 735px) {
+    #user_info_details {
+        display: none;
+    }
+    #search-bar{
+        display: none;
+    }
+    .sidepanel{
+        width: 100px;
+        min-width: 100px;
+    }
+    .content{
+        width: calc(100% - 100px)
+    }
+
+}
 </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -16,8 +42,8 @@
     <div style="margin-top:0px; padding-top:50px">
         <div class="container-fluid h-100 mt-2">
 			<div class="row justify-content-center h-100">
-				<div class="col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
-					<div class="card-header">
+				<div class="sidepanel chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
+					<div class="card-header" id="search-bar">
 						<div class="input-group">
 							<input type="text" placeholder="Search..." name="" class="form-control search">
 							<div class="input-group-prepend">
@@ -37,7 +63,7 @@
                                                  src="{{ x.friend.profile_img.url }}">
                                             <span class="online_icon"></span>
                                         </div>
-                                        <div class="user_info">
+                                        <div class="user_info" id="user_info_details">
                                             <span>{{x.friend.username}}</span>
                                             <p>{{x.message|truncatechars:20}}</p>
                                         </div>
@@ -49,7 +75,7 @@
 					<div class="card-footer"></div>
 				</div></div>
 
-                <div class="col-md-9 col-xl-9 chat">
+                <div class="content chat">
                     <div class="card" id="id_chatroom_card">
                         <div class="card-header msg_head">
                             <div class="d-flex bd-highlight" style="height:50px;">
