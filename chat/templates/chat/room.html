@@ -3,24 +3,38 @@
 
 {% extends 'base.html' %}
 {% load static %}
-<style>
-    .offline_icon{
-		position: absolute;
-		height: 15px;
-		width:15px;
-		background-color: #c23616;
-		border-radius: 50%;
-		bottom: 0em;
-		right: 0em;
-		border:1.5px solid white;
-	}
-</style>
 
 {% block main %}
 <style>
-    .main{
-        /* background-color:#1d1e28 */
+    .content {
+        width: calc(100% - 340px)
     }
+    .sidepanel{
+        float: left;
+        min-width: 280px;
+        max-width: 340px;
+        width: 40%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        margin-top: 0px;
+    }
+    @media screen and (max-width: 735px) {
+    #user_info_details {
+        display: none;
+    }
+    #search-bar{
+        display: none;
+    }
+    .sidepanel{
+        width: 100px;
+        min-width: 100px;
+    }
+    .content{
+        width: calc(100% - 100px)
+    }
+
+}
 </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -28,8 +42,8 @@
     <div style="margin-top:0px; padding-top:50px">
         <div class="container-fluid h-100 mt-2">
 			<div class="row justify-content-center h-100">
-				<div class="col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
-					<div class="card-header">
+				<div class="sidepanel chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
+					<div class="card-header" id="search-bar">
 						<div class="input-group">
 							<input type="text" placeholder="Search..." name="" class="form-control search">
 							<div class="input-group-prepend">
@@ -38,7 +52,7 @@
 						</div>
 					</div>
 					<div class="card-body contacts_body custom-scrollbar" id="contacts_body" onmouseover="onmouseover_contacts_body()"
-                        onmouseout="onmouseout_contacts_body()">
+                        onmouseout="onmouseoout_contacts_body()">
 						<ui class="contacts">
                             {% for x in m_and_f %}
                                 <li id="friend-item-container">
@@ -47,21 +61,11 @@
                                         <div class="img_cont" style="width:50px;">
                                             <img class="rounded-circle user_img" id="id_friend_img_{{x.friend.id}}"
                                                  src="{{ x.friend.profile_img.url }}">
-                                            {% if x.friend.is_online %}
-                                                <span id="online_status_{{ x.friend.id }}" style="position: absolute;
-                                                height: 15px;
-                                                width:15px;background-color: #4cd137;border-radius: 50%;bottom: 0em;
-                                                right: 0em;border:1.5px solid white;"></span>
-                                            {% else %}
-                                                <span id="online_status_{{ x.friend.id }}" style="position: absolute;height: 15px;
-                                                width:15px;background-color: #c23616;border-radius: 50%;bottom: 0em;
-                                                right: 0em;border:1.5px solid white;"></span>
-                                            {% endif %}
+                                            <span class="online_icon"></span>
                                         </div>
-                                        <div class="user_info">
+                                        <div class="user_info" id="user_info_details">
                                             <span>{{x.friend.username}}</span>
-                                            <p id="id_friend_message_{{ x.friend.id }}"
-                                            >{{x.message|truncatechars:20}}</p>
+                                            <p>{{x.message|truncatechars:20}}</p>
                                         </div>
                                     </div>
                                 </li>
@@ -71,24 +75,21 @@
 					<div class="card-footer"></div>
 				</div></div>
 
-                <div class="col-md-9 col-xl-9 chat">
+                <div class="content chat">
                     <div class="card" id="id_chatroom_card">
                         <div class="card-header msg_head">
                             <div class="d-flex bd-highlight" style="height:50px;">
-                                <div class="img_cont" id="id_user_info_container">
+                                <div class="img_cont">
                                     <img src="#" class="rounded-circle user_img" id="id_other_user_profile_image" alt="none">
-                                    <span style="position: absolute;height: 15px;
-                                                width:15px;border-radius: 50%;bottom: 0em;
-                                                right: 0em;border:1.5px solid white;"
-                                                id="online-status-code"></span>
+                                    <span class="online_icon"></span>
                                 </div>
                                 <div style="margin-bottom: auto;margin-left: 15px;">
                                     <span id="id_other_username" style="font-size:20px;font-weight:500;
                                     color:white"></span>
-                                    <p id="online-status-text" style="font-size:10px; color:white"></p>
+                                    <p style="font-size:10px; color:white">Online</p>
                                 </div>
                                 <div class="video_cam">
-                                    <span id="video-call"><i class="fas fa-video"></i></span>
+                                    <span><i class="fas fa-video"></i></span>
                                     <span><i class="fas fa-phone"></i></span>
                                 </div>
                             </div>
@@ -123,13 +124,7 @@
                             <div class="card-footer">
                                 <div class="input-group">
                                     <div class="input-group-append">
-                                        <div class="input-group-text attach_btn" method="post">
-                                            {% csrf_token %}
-                                            <label for="id_chat_file_input">
-                                                <i class="fas fa-paperclip"></i>
-                                              </label>
-                                            <input type="file" name='file' id="id_chat_file_input" onchange="autoUpload()" style="visibility:hidden;width:0;height:0">
-                                        </div>
+                                        <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
                                     </div>
                                     <textarea name="" class="form-control type_msg" placeholder="Type your message..."
                                         id="id_chat_message_input"></textarea>
@@ -147,53 +142,11 @@
 
     </div>
     <script>
-            function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    function autoUpload() {
-        const csrftoken = getCookie('csrftoken');
-        var data = new FormData()
-        input = document.getElementById("id_chat_file_input")
-        data.append('file', input.files[0])
-        data.append('room','private')
-        data.append('room_id', roomId)
-        input.value = null
-        const request = new Request(
-        '/upload/',
-        {headers: {'X-CSRFToken': csrftoken}}
-        );
-        fetch(request, {
-            method: 'POST',
-            body: data,
-        }).then(response => response.json())
-        .then(data => { 
-            console.log(data)
-            chat_websocket.send(JSON.stringify({
-            "command":"send",
-            "message": data.content,
-            "room": roomId,
-            "file":data.file
-        }))
-        })
-    }
 
         function onmouseover_contacts_body(){
             document.getElementById("contacts_body").style.overflowY="scroll";
         }
-        function onmouseout_contacts_body(){
+        function onmouseoout_contacts_body(){
             document.getElementById("contacts_body").style.overflow="hidden";
         }
         function onmouseover_chatlog(){
@@ -210,11 +163,6 @@
 
         var chat_websocket = null;
         var roomId = null;
-        const GET_USERINFO_INTERVAL = 4000
-        if("{{request.user.is_authenticated}}"){
-            setInterval(getUserInfo, GET_USERINFO_INTERVAL)
-            setInterval(getFriendsInfo,GET_USERINFO_INTERVAL)
-        }
 
         onStart()
         
@@ -292,23 +240,6 @@
                 if(data.user_info){
                     handleUserInfoPayload(data.user_info)
                 }
-                if(data.friends_info){
-                    //console.log(data.friends_info)
-                    handleFriendsInfo(data.friends_info)
-                }
-                if(data.msg_type=="call-from-caller"){
-                    if("{{ request.user.username }}"==data.username) {
-                        let url= "call"
-                        let username = "{{ request.user.username }}"
-                        let friend_username = data['friend_username']
-                        window.open(url + "/?you="+username+ "&friend=" + friend_username+"&call=0", 'callee-tab',
-                            'location=1,status=1,scrollbars=1, ' +
-                            'resizable=1,' +
-                            ' directories=1, ' +
-                            'toolbar=1, ' +
-                            'titlebar=1')
-                    }
-                }
                 if(data.msg_type==0)
                 {
                     if(data['user_id']=={{ auth_user_id }}){
@@ -371,88 +302,19 @@
             messageInputDom.value = ""
         }
 
-        {#For video call#}
-
-        document.getElementById("video-call").onclick=function(e){
-            var online = document.getElementById("online-status-text").innerHTML
-            if(online=="Online"){
-                chat_websocket.send(JSON.stringify({
-                "command":"call-for-callee",
-                    "room_id":roomId,
-                }))
-
-                let url= "call"
-                let friend_username = document.getElementById("id_other_username").innerHTML
-                let username = "{{ request.user.username }}"
-                win = window.open(url+"/?you="+username+"&friend="+friend_username+"&call=1", 'caller-tab','location=1,' +
-                    'status=1,' +
-                    'scrollbars=1, ' +
-                    'resizable=1, ' +
-                    'directories=1, ' +
-                    'toolbar=1, ' +
-                    'titlebar=1');
-            }
-            else{
-                e.preventDefault();
-            }
-        }
-
-        {#End video call#}
-
         function getUserInfo() {
             chat_websocket.send(JSON.stringify({
                 "command":"get_user_info",
                 "room_id": roomId
             }))
         }
-
-        function getFriendsInfo(){
-            chat_websocket.send(JSON.stringify({
-                "command":"get_friends_info"
-            }))
-        }
-
-
         
         function handleUserInfoPayload(user_info) {
             document.getElementById("id_other_username").innerHTML= user_info.username
             document.getElementById("id_other_user_profile_image").src = user_info.profile_img
             document.getElementById("id_user_info_container").href = "{% url 'view' user_id=123123 %}".replace("123123",user_info.id)
-            var status_code = document.getElementById("online-status-code")
-            var status_text = document.getElementById("online-status-text")
-
-            if(user_info['is_online']=="True"){
-                status_code.style.backgroundColor = "#4cd137"
-                status_text.innerHTML="Online"
-            }
-            else{
-                status_code.style.backgroundColor = "#c23616"
-                status_text.innerHTML="Offline"
-            }
         }
 
-        function handleFriendsInfo(friends_info){
-            console.log(friends_info)
-            friends_info.forEach(friend=>{
-
-                var status_icon = document.getElementById("online_status_"+friend.id)
-                var status_text = document.getElementById("id_friend_message_"+friend.id)
-                if(friend['is_online']=="True"){
-                    status_icon.style.backgroundColor="#4cd137"
-                    console.log("the user "+friend.username+"is online")
-                }
-                else{
-                    status_icon.style.backgroundColor="#c23616"
-                    console.log("the user "+friend.username+"is offline")
-                }
-                if(friend['newest_message'].length>20){
-                    status_text.innerHTML=friend['newest_message'].slice(0,20)
-                }
-                else{
-                     status_text.innerHTML=friend['newest_message']
-                }
-            })
-        }
 
         function appendChatMessage(data,position,maintainPosition,isNewMessage) {
             message = data['message']
@@ -460,15 +322,14 @@
             user_id = data['user_id']
             profile_img = data['profile_img']
             timestamp = data['timestamp']
-            file = data['file']
             var msg = message +"\n"
             var username = uName
             createChatMessageElement(msg,username,profile_img,user_id,position,timestamp,
-                maintainPosition,isNewMessage, file)
+                maintainPosition,isNewMessage)
         }
 
         function createChatMessageElement(msg,username,profile_img,user_id,position,timestamp,
-        maintainPosition,isNewMessage, file) {
+        maintainPosition,isNewMessage) {
             if (position == "friend") {
                 var chatlog = document.getElementById("id-chat-log")
 
@@ -521,11 +382,7 @@
 
                 var msgDiv = document.createElement("div")
                 msgDiv.classList.add("msgDiv-left-css")
-                if (file) {
-                msgDiv.innerHTML = '<a href="' + file + '" target="_blank" style="color:black;">' + "<u>" + message + "</u>" + '</a>'
-                } else {
-                    msgDiv.innerHTML = message
-                }
+                msgDiv.innerHTML = message
                 messageDiv.appendChild(msgDiv)
 
                 chatDiv.appendChild(messageDiv)
@@ -576,11 +433,7 @@
 
                 var msgDiv = document.createElement("div")
                 msgDiv.classList.add("msgDiv-right-css")
-                if (file) {
-                msgDiv.innerHTML = '<a href="' + file + '" target="_blank" style="color:black;">' + "<u>" + message + "</u>" + '</a>'
-                } else {
-                    msgDiv.innerHTML = message
-                }
+                msgDiv.innerHTML = message
                 messageDiv.appendChild(msgDiv)
 
                 newMessageDiv.appendChild(messageDiv)
