@@ -27,8 +27,5 @@ six==1.16.0
 sqlparse==0.4.2
 txaio==21.2.1
 typing-extensions==3.10.0.2
-<<<<<<< HEAD
 zope.interface==5.4.0
-=======
-zope.interface==5.4.0
->>>>>>> cd638b45114178c995c0a27f226a6be05140ea4a
+

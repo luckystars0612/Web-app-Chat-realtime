@@ -195,8 +195,7 @@ def edit_account(request, **kwargs):
         print(account.profile_img.url)
         if form.is_valid():
             #delete old image
-
-            account.profile_img.delete()
+            #account.profile_img.delete()
             form.save()
             return redirect("view", user_id=account.pk)
         else:
