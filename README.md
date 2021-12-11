@@ -4,6 +4,7 @@ Use django to build backend
 
 ## Some Features
 
+- Realtime message and notification
 - Public chat for all user
 - Friend system and private chat (messages, files, images)
 - Video call with other people
