@@ -7,6 +7,7 @@ Use django to build backend
 - Public chat for all user
 - Friend system and private chat (messages, files, images)
 - Video call with other people
+- Chat with BOT simsimi
 
 ## Requirement
 
