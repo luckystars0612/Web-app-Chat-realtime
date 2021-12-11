@@ -31,4 +31,5 @@ python manage.py runserver
 ```
 
 Chat with BOT
+
 Find bot in search box and add friend with it.
