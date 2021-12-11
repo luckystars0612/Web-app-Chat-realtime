@@ -15,7 +15,7 @@ Use django to build backend
 
 ## Usage
 
-Install requred modules
+Install required modules
 ```sh
 pip install -r require_fix.txt
 ```
